@@ -1,0 +1,11 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# deps (if you ever add them)
+node_modules/
+
+# local secrets
+config.local.js
+.env

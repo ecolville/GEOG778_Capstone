@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Educator Geologic Map of Ice Age Trail</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Interactive educator-focused geologic map of the Ice Age Trail with glacial and bedrock features." />
+
+  <!-- ArcGIS API CSS and JS -->
+  <link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.25/"></script>
+
+  <!-- Inline CSS for layout and style -->
+  <style>
+    html, body, #viewDiv {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+    body {
+      font-family: "Century Gothic", sans-serif;
+    }
+    /* Header styles */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #0077D4; 
+      color: #ffffff;
+      padding: 10px 20px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.4em;
+    }
+    /* Map container */
+    #viewDiv {
+      height: calc(100% - 60px);
+    }
+    /* Educator widget styles */
+    #educatorWidget {
+      padding: 10px;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 280px;
+    }
+    #educatorWidget h3 {
+      margin-top: 0;
+    }
+    .esri-popup {
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .esri-popup__header {
+      background-color: #0077D4;
+      color: #ffffff;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      padding: 10px 15px;
+      font-weight: 500;
+    }
+    .esri-popup__content {
+      background-color: rgba(0, 119, 212, 0.05);
+      padding: 15px;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2),
+                  0 6px 20px rgba(0, 0, 0, 0.19);
+      position: relative;
+      text-align: center;
+    }
+    .modal-content h2 { margin-top: 0; }
+    .modal-text { text-align: left; }
+    .modal-text ul { padding-left: 20px; }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover, .close:focus { color: #000; }
+  </style>
+</head>
+<body>
+  <!-- Header Section -->
+  <div class="header">
+    <h1>Educator Geologic Map of Ice Age Trail</h1>
+  </div>
+
+  <!-- Educator Widget -->
+  <div id="educatorWidget">
+    <h3>Educator Tools</h3>
+    <p>Use these prompts in class:</p>
+    <ul>
+      <li>Compare <b>bedrock vs. glacial geology</b>. How do the maps differ?</li>
+      <li>Find a <b>drumlin or moraine</b>. How do glaciers shape the land?</li>
+      <li>Identify a <b>granite outcrop</b>. What does its age tell us about Wisconsin’s geologic history?</li>
+    </ul>
+    <p><a href="EducatorGuide.pdf" target="_blank">Download Educator Guide</a></p>
+  </div>
+
+  <!-- Map Container -->
+  <div id="viewDiv"></div>
+
+  <!-- Welcome Modal -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Welcome Educators!</h2>
+      <img src="LOGO_Ice-Age-Trail-Alliance-JPG-1267x1536.jpg" alt="Ice Age Trail Alliance Logo" width="125" height="150" />
+      <div class="modal-text">
+        <p>This interactive map highlights the <b>bedrock</b> and <b>glacial features</b> along Wisconsin’s Ice Age Trail. Use it in your classroom to help students connect geology to real landscapes.</p>
+        <ul>
+          <li><strong>Geologic Layers:</strong> Toggle between glacial features and bedrock geology.</li>
+          <li><strong>Classroom Prompts:</strong> Use the educator panel for ready-made teaching ideas.</li>
+          <li><strong>Inquiry-Based Learning:</strong> Encourage students to ask: “How did glaciers leave their mark here?”</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ArcGIS API and Application Script -->
+  <script>
+    // Modal functionality
+    var modal = document.getElementById("myModal");
+    var closeBtn = document.getElementsByClassName("close")[0];
+    window.onload = function() { modal.style.display = "block"; };
+    closeBtn.onclick = function() { modal.style.display = "none"; };
+    window.onclick = function(event) { if (event.target === modal) { modal.style.display = "none"; } };
+  </script>
+<!--Load local config (had key)-->
+    <script src="config.local.js"></script>
+
+    <!--Main app code-->
+<script>
+    require([
+      "esri/config",
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/widgets/BasemapGallery",
+      "esri/widgets/Locate",
+      "esri/widgets/Search",
+      "esri/widgets/Expand",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/LayerList"
+    ], function(esriConfig, Map, MapView, BasemapGallery, Locate, Search, Expand, FeatureLayer, LayerList) {
+
+      // Use the key injected by config.local.js
+    if (!window.ARCGIS_API_KEY) {
+      console.error("ArcGIS API key is missing. Did you create config.local.js with your key?");
+    }
+    esriConfig.apiKey = window.ARCGIS_API_KEY;
+      
+      // Create the map with the light-gray basemap
+      const map = new Map({ basemap: "arcgis-light-gray" });
+      const view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-89.8505, 44.8505], // Marathon County
+        zoom: 9
+      });
+
+      // Add Basemap Gallery, Locate, and Search widgets
+      const bgGallery = new BasemapGallery({ view: view });
+      view.ui.add(new Expand({ view: view, content: bgGallery }), "top-left");
+      view.ui.add(new Locate({ view: view }), "top-left");
+      const searchWidget = new Search({ view: view, suggestionsEnabled: true, maxSuggestions: 3 });
+      view.ui.add(new Expand({
+        view: view,
+        content: searchWidget,
+        expandIconClass: "esri-icon-search",
+        expandTooltip: "Search"
+      }), { position: "top-left", index: 2 });
+
+      // Bedrock Geology layer
+      const bedrockGeology = new FeatureLayer({
+        url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/Simplified_Marathon_Bedrock/FeatureServer",
+        title: "Bedrock Geology",
+        outFields: ["simple", "Descr", "Age"],
+        popupTemplate: {
+          title: "Bedrock Geology",
+          content: "<b>Rock Name:</b> {simple}<br><b>Age:</b> {Age}<br><b>Description:</b> {Descr}<br><br><i>Classroom prompt:</i> How does this bedrock type influence the land above it?"
+        }
+      });
+      map.add(bedrockGeology);
+      
+      // Glacial Geology layer
+      const glacialGeology = new FeatureLayer({
+        url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/Simple_Marathon_Glacial/FeatureServer",
+        title: "Glacial Geology",
+        outFields: ["Name", "Descr", "Direction", "Age"],
+        popupTemplate: {
+          title: "Glacial Geology",
+          content: `<b>Feature Name:</b> {Name}<br><b>Direction:</b> {Direction}<br><b>Age:</b> {Age}<br><b>Description:</b> {Descr}<br><br><i>Classroom prompt:</i> What glacial process likely created this feature?`
+        }
+      });
+      map.add(glacialGeology);
+
+      // Add Layer List widget
+      view.when(() => {
+        const layerList = new LayerList({ view: view });
+        view.ui.add(new Expand({
+          view: view,
+          content: layerList,
+          expandIconClass: "esri-icon-layer-list",
+          expandTooltip: "Layers",
+          expanded: true
+        }), "top-right");
+      });
+
+      // Add Educator Tools panel to map
+      const educatorWidgetElement = document.getElementById("educatorWidget");
+      const educatorExpand = new Expand({
+        view: view,
+        content: educatorWidgetElement,
+        expandIconClass: "esri-icon-education",
+        expandTooltip: "Educator Tools",
+        expanded: true
+      });
+      view.ui.add(educatorExpand, "top-left");
+
+    }); // End require
+  </script>
+</body>
+</html>
