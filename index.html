@@ -6,383 +6,675 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Interactive educator-focused geologic map of the Ice Age Trail with glacial and bedrock features." />
 
-  <!-- ArcGIS API CSS and JS -->
+  <!-- ArcGIS API -->
   <link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css" />
   <script src="https://js.arcgis.com/4.25/"></script>
 
-  <!-- Inline CSS for layout and style -->
+  <!-- Sophisticated, geology-aware theme -->
   <style>
-    html, body, #viewDiv {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
+    :root{
+      /* TRAIL BRAND / ACCENTS */
+      --amber: #F0AA00;            /* IAT primary line */
+      --amber-800:#b97f00;
+      --cr-dash:#444444;
+
+      /* POIs */
+      --poi:#FE5000;
+      --poi-halo:#ffffff;
+
+      /* UI SHELL */
+      --ink-900:#0E1116;
+      --ink-800:#151922;
+      --ink-700:#1C2230;
+      --ink-600:#242C3B;
+      --ink-500:#2F384B;
+      --text-100:#ECF2F8;
+      --text-300:#C3CDD8;
+      --text-500:#90A0B5;
+      --glass: rgba(24,29,40,0.62);
+      --glass-border: rgba(255,255,255,0.09);
+
+      /* GEOLOGY PALETTE (from your renderer) */
+      --g-green1:#98A48E; --g-green2:#C0DA94; --g-green3:#B6D3AC; --g-green4:#99C18A;
+      --g-blue1:#6C93BA; --g-blue2:#476686; --g-blue3:#95B9DC;
+      --g-violet:#D2C8D6; --g-neutral1:#B8C1BC; --g-neutral2:#E6E6E6;
+      --g-brown1:#AA9388; --g-rose:#C6B4B7; --g-cream1:#F3EDC8; --g-yellow1:#FFFFAB; --g-yellow2:#F9EA98;
+
+      /* popup tint */
+      --tint: rgba(108,147,186,0.10); /* echoes g-blue1 */
     }
-    body {
-      font-family: "Century Gothic", sans-serif;
-    }
-    /* Header styles */
+
+    html, body, #viewDiv { height:100%; width:100%; margin:0; padding:0; }
+    body { font-family: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji"; background: var(--ink-900); color: var(--text-100); }
+
+    /* Header */
     .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #0077D4; 
-      color: #ffffff;
-      padding: 10px 20px;
+      position:fixed; inset: 16px 16px auto 16px; z-index: 10;
+      display:flex; align-items:center; gap:12px;
+      background: linear-gradient(180deg, rgba(34,41,56,0.85), rgba(24,29,40,0.78));
+      border:1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      padding:10px 14px; border-radius:14px; box-shadow: 0 10px 30px rgba(0,0,0,.25);
     }
-    .header h1 {
-      margin: 0;
-      font-size: 1.4em;
+    .brand {
+      display:flex; align-items:center; gap:10px;
     }
-    /* Map container */
-    #viewDiv {
-      height: calc(100% - 60px);
+    .chip {
+      width:14px; height:14px; border-radius:999px; background:var(--amber); box-shadow: 0 0 0 2px rgba(0,0,0,.25), 0 0 10px rgba(240,170,0,.6) inset;
     }
-  /* Educator Resources button */
-.eduBtn {
-  background-color: #ff6700;       /* orange to match trail tone */
-  color: #1b1b1b;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.05s ease;
+    .title {
+      margin:0; font-size:15px; letter-spacing:.3px; color:var(--text-100);
+    }
+
+    /* Buttons */
+    .btn {
+      appearance:none; border:none; cursor:pointer;
+      background:linear-gradient(180deg, #2E3A52, #253148);
+      color:var(--text-100);
+      padding:8px 12px; border-radius:10px; font-size:13px; font-weight:600;
+      border:1px solid var(--glass-border);
+      transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .btn:hover { box-shadow:0 6px 14px rgba(0,0,0,.25); }
+    .btn:active { transform: translateY(1px); }
+
+    /* Orange accent button (educator) */
+    .btn-accent {
+      background: linear-gradient(180deg, #ff7a1a, #e75d00);
+      color:#141414;
+      border:1px solid rgba(0,0,0,.15);
+    }
+    .btn-accent:hover { box-shadow:0 6px 20px rgba(254, 80, 0, .35); }
+
+    /* Control dock (right) */
+    .dock {
+      position:fixed; right:16px; top:80px; z-index: 10;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .panel {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      border:1px solid var(--glass-border);
+      border-radius:14px; padding:10px 10px;
+      color:var(--text-100);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      min-width: 260px;
+    }
+    .panel h3 { margin:6px 8px 8px; font-size:13px; font-weight:700; color:var(--text-300); text-transform: uppercase; letter-spacing:.12em; }
+    .legend { display:grid; grid-template-columns: 18px 1fr; row-gap:8px; column-gap:10px; align-items:center; padding: 0 8px 8px; max-height:220px; overflow:auto; }
+    .swatch { width:16px; height:12px; border-radius:3px; border:1px solid rgba(0,0,0,.25); }
+    .legend small { color:var(--text-500); }
+
+    /* Esri widgets theming tweaks */
+    .esri-ui .esri-widget {
+      background: var(--glass);
+      color: var(--text-100);
+      border:1px solid var(--glass-border);
+      backdrop-filter: blur(8px);
+    }
+    .esri-popup__header { background: var(--ink-700); color: var(--text-100); }
+    .esri-popup__content { background: var(--tint); color: var(--text-100); }
+    .esri-layer-list__item-label, .esri-search__input { color: var(--text-100); }
+
+    .esri-widget__heading { color: var(--text-300) !important; }
+
+    /* --- LayerList dark fix --- */
+.esri-layer-list, 
+.esri-layer-list__list,
+.esri-layer-list__item,
+.esri-layer-list__item-label {
+  background-color: var(--glass) !important;
+  color: var(--text-100) !important;
 }
-.eduBtn:hover { background-color: #ffb627; }
-.eduBtn:active { transform: translateY(1px); }
-    .esri-popup {
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    .esri-popup__header {
-      background-color: #0077D4;
-      color: #ffffff;
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
-      padding: 10px 15px;
-      font-weight: 500;
-    }
-    .esri-popup__content {
-      background-color: rgba(0, 119, 212, 0.05);
-      padding: 15px;
-      border-bottom-left-radius: 8px;
-      border-bottom-right-radius: 8px;
-    }
-    /* Modal styles */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 100;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.4);
-    }
-    .modal-content {
-      background-color: #fefefe;
-      margin: 10% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-      max-width: 600px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2),
-                  0 6px 20px rgba(0, 0, 0, 0.19);
-      position: relative;
-      text-align: center;
-    }
-    .modal-content h2 { margin-top: 0; }
-    .modal-text { text-align: left; }
-    .modal-text ul { padding-left: 20px; }
-    .close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      color: #aaa;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .close:hover, .close:focus { color: #000; }
+
+/* make nested controls readable */
+.esri-layer-list__item-actions-menu,
+.esri-layer-list__item-actions-list,
+.esri-layer-list__item-actions-button {
+  background-color: var(--ink-800) !important;
+  color: var(--text-100) !important;
+  border-color: var(--glass-border) !important;
+}
+
+/* optional: hover/active clarity */
+.esri-layer-list__item:hover {
+  background-color: rgba(255,255,255,0.06) !important;
+}
+
+/* Push the Esri default controls below your fixed header */
+.esri-ui-top-left {
+  top: 90px !important; /* move down enough to clear your header height + margin */
+}
+
+.eduPanel {
+  position: fixed; left: 16px; top: 90px; z-index: 12;
+  width: 340px; background: var(--glass); color: var(--text-100);
+  border: 1px solid var(--glass-border); border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25); backdrop-filter: blur(10px);
+  overflow: hidden; /* for sticky header & scroll shadow mask */
+}
+
+/* sticky mini-header */
+.eduHeader {
+  position: sticky; top: 0; z-index: 1;
+  display: grid; grid-template-columns: 18px 1fr auto; align-items: center;
+  gap: 8px; padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(34,41,56,.9), rgba(24,29,40,.85));
+  border-bottom: 1px solid var(--glass-border);
+}
+.eduHeader h3 { margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: var(--text-300); }
+.eduDot { width: 12px; height:12px; border-radius: 999px; background: var(--amber); box-shadow: 0 0 8px rgba(240,170,0,.6); }
+.btn-min { padding: 0 8px; line-height: 20px; height: 24px; border-radius: 8px; background: rgba(255,255,255,.06); color: var(--text-100); }
+
+/* scrollable body with soft edge mask for nice screenshots */
+.eduBody {
+  max-height: 380px; overflow: auto; padding: 12px 14px;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 92%, rgba(0,0,0,0));
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 92%, rgba(0,0,0,0));
+}
+.eduBody h4 { margin: 10px 0 6px; font-size: 12px; color: var(--text-300); text-transform: uppercase; letter-spacing: .10em; }
+
+.pdfList, .promptList { margin: 6px 0 12px; padding-left: 0; list-style: none; }
+.pdfList li, .promptList li { margin: 6px 0; line-height: 1.35; }
+.pdfList a {
+  display: inline-flex; align-items: center; gap: 8px;
+  text-decoration: none; color: var(--text-100);
+  padding: 6px 8px; border-radius: 8px; transition: background .15s ease;
+}
+.pdfList a::before {
+  content: "📄"; font-size: 16px; opacity: .9;
+}
+.pdfList a:hover { background: rgba(255,255,255,.06); text-decoration: underline; }
+
+/* small caption under the header */
+.header p.tip {
+  font-size: 12px; color: var(--text-500); margin: 0 0 0 12px;
+}
+
+/* ---------- Modal polish ---------- */
+.modal { display:none; position:fixed; z-index: 100; inset:0; background: rgba(0,0,0,.5); }
+.modal-content {
+  width: min(820px, 92%); margin: 6% auto; border-radius: 18px; padding: 0; overflow: hidden;
+  background: linear-gradient(180deg, #101520, #0c1019);
+  border: 1px solid var(--glass-border); box-shadow: 0 20px 60px rgba(0,0,0,.45);
+}
+
+/* modal header strip */
+.modal-head {
+  display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+  background: linear-gradient(180deg, rgba(34,41,56,.9), rgba(24,29,40,.85));
+  border-bottom: 1px solid var(--glass-border);
+}
+.modal-head h2 { margin: 0; font-size: 18px; color: var(--text-100); }
+.modal .close {
+  margin-left: auto; cursor: pointer; color: var(--text-300);
+  font-size: 20px; font-weight: 700; background: rgba(255,255,255,.06);
+  width: 28px; height: 28px; line-height: 26px; text-align: center; border-radius: 8px;
+}
+.modal .close:hover { color: #fff; }
+
+/* modal body as 2-column at md+ widths */
+.modal-body {
+  display: grid; grid-template-columns: 140px 1fr; gap: 16px; padding: 16px;
+}
+.modal-body img { border-radius: 10px; width: 110px; height: auto; margin: 6px auto 0; display: block; }
+.modal-text { color: var(--text-300); }
+.modal-text ul { margin: 10px 0 0 18px; }
+
+@media (max-width: 640px){
+  .eduPanel { width: calc(100% - 32px); left: 16px; right: 16px; }
+  .modal-body { grid-template-columns: 1fr; }
+}
+
+/* keep map controls clear of header */
+.esri-ui-top-left { top: 90px !important; }
+
+    /* View takes the rest */
+    #viewDiv { height:100%; width:100%; }
   </style>
 </head>
 <body>
-  <!-- Header Section -->
-  <div class="header">
-  <h1>Educator Geologic Map of Ice Age Trail</h1>
-  <button id="eduBtn" class="eduBtn" type="button" aria-label="Educator Resources" title="Educator Resources">
-    Educator Resources
-  </button>
+<!-- Educator Panel -->
+<div class="eduPanel" id="eduPanel" aria-label="Educator Resources">
+  <div class="eduHeader">
+    <span class="eduDot" aria-hidden="true"></span>
+    <h3>Educator Resources</h3>
+    <button id="eduClose" class="btn btn-min" title="Hide panel" aria-label="Hide Educator Resources">×</button>
+  </div>
+
+  <div class="eduBody">
+    <h4>Glacial Feature Guides (PDFs)</h4>
+    <ul class="pdfList">
+      <li><a href="docs/How_Do_Moraines_Form.pdf" target="_blank" rel="noopener">How Do Moraines Form?</a></li>
+      <li><a href="docs/How_Do_Drumlins_Form.pdf" target="_blank" rel="noopener">How Do Drumlins Form?</a></li>
+      <li><a href="docs/What_Are_Eskers.pdf" target="_blank" rel="noopener">What Are Eskers?</a></li>
+      <li><a href="docs/What_Are_Kettles_and_Kettle_Lakes.pdf" target="_blank" rel="noopener">What Are Kettles and Kettle Lakes?</a></li>
+      <li><a href="docs/How_Glaciers_Shape_the_Land.pdf" target="_blank" rel="noopener">How Glaciers Shape the Land</a></li>
+    </ul>
+
+    <h4>Teaching Prompts</h4>
+    <ul class="promptList">
+      <li>How does <em>till</em> differ from <em>outwash</em> at this stop?</li>
+      <li>What evidence here points to stagnant ice vs. active ice?</li>
+      <li>Which MapUnit(s) best explain the landform visible from the Trail?</li>
+    </ul>
+  </div>
 </div>
 
-  
+  <!-- Header -->
+ <div class="header" role="banner">
+  <div class="brand">
+    <span class="chip" aria-hidden="true"></span>
+    <h1 class="title">Educator Geologic Map of the Ice Age Trail</h1>
+  </div>
 
-  <!-- Map Container -->
-  <div id="viewDiv"></div>
+  <!-- Replace your inline-styled <p> with this -->
+  <p class="tip">Click orange dots to open educator guides for that stop.</p>
 
-  <!-- Welcome Modal -->
-  <div id="myModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Welcome Educators!</h2>
-      <img src="LOGO_Ice-Age-Trail-Alliance-JPG-1267x1536.jpg" alt="Ice Age Trail Alliance Logo" width="125" height="150" />
-      <div class="modal-text">
-        <p>This interactive map highlights the <b>bedrock</b> and <b>glacial features</b> along Wisconsin’s Ice Age Trail. Use it in your classroom to help students connect geology to real landscapes.</p>
-        <ul>
-          <li><strong>Geologic Layers:</strong> Toggle between glacial features and bedrock geology.</li>
-<li><strong>Classroom Prompts:</strong> Click the <em>Educator Resources</em> button for ready-made teaching ideas.</li>
-          <li><strong>Inquiry-Based Learning:</strong> Encourage students to ask: “How did glaciers leave their mark here?”</li>
-        </ul>
+  <div style="margin-left:auto; display:flex; gap:8px;">
+    <button id="focusBtn" class="btn" title="Toggle Focus: highlight Trail & POIs">Focus Trail</button>
+    <button id="shotBtn" class="btn" title="Export a high-res map image">Export Screenshot</button>
+    <button id="eduBtn" class="btn btn-accent" type="button" aria-label="Educator Resources" title="Educator Resources">Educator Resources</button>
+  </div>
+</div>
+
+  <!-- Dock: custom legend & quick toggles -->
+  <div class="dock">
+    <div class="panel" id="legendPanel" aria-label="Glacial Geology Key">
+      <h3>Glacial Geology Key</h3>
+      <div class="legend">
+        <!-- a handful for screenshots; you can expand if you like -->
+        <span class="swatch" style="background:var(--g-green2)"></span><small>Ice-contact stratified drift (Ci)</small>
+        <span class="swatch" style="background:var(--g-green1)"></span><small>Ground moraine / till (Ch/Cl)</small>
+        <span class="swatch" style="background:var(--g-green3)"></span><small>Hummocky till (Cr)</small>
+        <span class="swatch" style="background:var(--g-blue1)"></span><small>Glaciolacustrine sand (Hh)</small>
+        <span class="swatch" style="background:var(--g-blue3)"></span><small>Glaciolacustrine silt (Hs)</small>
+        <span class="swatch" style="background:var(--g-yellow2)"></span><small>Outwash sand (st)</small>
+        <span class="swatch" style="background:var(--g-cream1)"></span><small>Loess / fine deposits (sm/su)</small>
       </div>
     </div>
   </div>
 
-  <!-- ArcGIS API and Application Script -->
+  <!-- Map -->
+  <div id="viewDiv" role="main" aria-label="Map"></div>
+
+  <!-- Modal -->
+  <div id="myModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+    <div class="modal-content">
+  <div class="modal-head">
+    <h2 id="welcomeTitle">Welcome, Educators!</h2>
+    <button class="close" aria-label="Close">&times;</button>
+  </div>
+
+  <div class="modal-body">
+    <img src="LOGO_Ice-Age-Trail-Alliance-JPG-1267x1536.jpg" alt="Ice Age Trail Alliance Logo" />
+    <div class="modal-text">
+      <p>This interactive map highlights <b>bedrock</b> and <b>glacial features</b> along Wisconsin’s Ice Age Trail. It’s tuned to make the <b>Trail</b> and <b>Geologic Points of Interest</b> pop for instruction and screenshots.</p>
+      <ul>
+        <li><strong>Focus Mode:</strong> dim geology to spotlight Trail &amp; POIs.</li>
+        <li><strong>Screenshot:</strong> export crisp images for your mockups.</li>
+        <li><strong>Layers:</strong> open the layer list (bottom-right) to toggle content.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+  <!-- API key -->
+  <script src="config.local.js"></script>
+
   <script>
-    // Modal functionality
-    var modal = document.getElementById("myModal");
-    var closeBtn = document.getElementsByClassName("close")[0];
-    window.onload = function() { modal.style.display = "block"; };
-    closeBtn.onclick = function() { modal.style.display = "none"; };
-    window.onclick = function(event) { if (event.target === modal) { modal.style.display = "none"; } };
-  </script>
-<!--Load local config (had key)-->
-    <script src="config.local.js"></script>
+  require([
+    "esri/config",
+    "esri/Map",
+    "esri/views/MapView",
+    "esri/widgets/BasemapGallery",
+    "esri/widgets/Locate",
+    "esri/widgets/Search",
+    "esri/widgets/Expand",
+    "esri/layers/FeatureLayer",
+    "esri/widgets/LayerList",
+    "esri/geometry/Point", 
+    "esri/Graphic", 
+    "esri/layers/GraphicsLayer"
+  ], function(esriConfig, Map, MapView, BasemapGallery, Locate, Search, Expand, FeatureLayer, LayerList, Point, Graphic, GraphicsLayer) {
 
-    <!--Main app code-->
-<script>
-    require([
-      "esri/config",
-      "esri/Map",
-      "esri/views/MapView",
-      "esri/widgets/BasemapGallery",
-      "esri/widgets/Locate",
-      "esri/widgets/Search",
-      "esri/widgets/Expand",
-      "esri/layers/FeatureLayer",
-      "esri/widgets/LayerList"
-    ], function(esriConfig, Map, MapView, BasemapGallery, Locate, Search, Expand, FeatureLayer, LayerList) {
-
-      // Use the key injected by config.local.js
-    if (!window.ARCGIS_API_KEY) {
-      console.error("ArcGIS API key is missing. Did you create config.local.js with your key?");
-    }
+    if (!window.ARCGIS_API_KEY) console.error("ArcGIS API key is missing. Did you create config.local.js with your key?");
     esriConfig.apiKey = window.ARCGIS_API_KEY;
-      
-      // Create the map with the light-gray basemap
-      const map = new Map({ basemap: "arcgis-light-gray" });
-      const view = new MapView({
-        container: "viewDiv",
-        map: map,
-        center: [-89.8505, 44.8505], // Marathon County
-        zoom: 9
-      });
 
-      // Add Basemap Gallery, Locate, and Search widgets
-      const bgGallery = new BasemapGallery({ view: view });
-      view.ui.add(new Expand({ view: view, content: bgGallery }), "top-left");
-      view.ui.add(new Locate({ view: view }), "top-left");
-      const searchWidget = new Search({ view: view, suggestionsEnabled: true, maxSuggestions: 3 });
-      view.ui.add(new Expand({
-        view: view,
-        content: searchWidget,
-        expandIconClass: "esri-icon-search",
-        expandTooltip: "Search"
-      }), { position: "top-left", index: 2 });
+    // Map & View
+    const map = new Map({
+      basemap: "gray-vector" // neutral canvas
+    });
 
-      // Bedrock Geology layer
-      const bedrockGeology = new FeatureLayer({
-        url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/Simplified_Marathon_Bedrock/FeatureServer",
+    const view = new MapView({
+      container: "viewDiv",
+      map,
+      center: [-89.8505, 44.8505],
+      zoom: 8,
+      highlightOptions: { color: [240,170,0,0.9], haloOpacity: 0.25, fillOpacity: 0.15 }
+    });
+
+    // --- Widgets (polished with glass) ---
+    const bgGallery = new BasemapGallery({ view });
+    view.ui.add(new Expand({ view, content: bgGallery, expandIconClass: "esri-icon-basemap" }), "top-left");
+
+    view.ui.add(new Locate({ view }), "top-left");
+
+    const searchWidget = new Search({ view, suggestionsEnabled: true, maxSuggestions: 3 });
+    view.ui.add(new Expand({ view, content: searchWidget, expandIconClass: "esri-icon-search", expandTooltip: "Search" }), { position: "top-left", index: 2 });
+
+    // --- Layers ---
+    const bedrockGeology = new FeatureLayer({
+      url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/Simplified_Marathon_Bedrock/FeatureServer",
+      title: "Bedrock Geology",
+      outFields: ["simple", "Descr", "Age"],
+      opacity: 0.65,
+      blendMode: "multiply",
+      popupTemplate: {
         title: "Bedrock Geology",
-        outFields: ["simple", "Descr", "Age"],
-        popupTemplate: {
-          title: "Bedrock Geology",
-          content: "<b>Rock Name:</b> {simple}<br><b>Age:</b> {Age}<br><b>Description:</b> {Descr}<br><br><i>Classroom prompt:</i> How does this bedrock type influence the land above it?"
+        content: "<b>Rock Name:</b> {simple}<br><b>Age:</b> {Age}<br><b>Description:</b> {Descr}<br><br><i>Classroom prompt:</i> How does this bedrock type influence the land above it?"
+      }
+    });
+    map.add(bedrockGeology);
+
+    // Glacial Geology (your palette, softened)
+    const glacialGeology = new FeatureLayer({
+      url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/Surficial_Geology_View/FeatureServer/0",
+      title: "Glacial Geology",
+      outFields: ["*"],
+      opacity: 0.85,
+      blendMode: "multiply",
+      renderer: {
+        type: "unique-value",
+        field: "MapUnit",
+        defaultSymbol: {
+          type: "simple-fill",
+          color: [200,200,200,0.15],
+          outline: { color: [120,120,120,0.45], width: 0.3 }
+        },
+        uniqueValueInfos: [
+          { value: "Ch", symbol: f("#98A48E") }, { value: "Ci", symbol: f("#C0DA94") },
+          { value: "Cl", symbol: f("#98A48E") }, { value: "Cr", symbol: f("#B6D3AC") },
+          { value: "Cs", symbol: f("#99C18A") }, { value: "Hh", symbol: f("#6C93BA") },
+          { value: "Hm", symbol: f("#476686") }, { value: "Hs", symbol: f("#95B9DC") },
+          { value: "Mr", symbol: f("#D2C8D6") }, { value: "b",  symbol: f("#B8C1BC") },
+          { value: "lp", symbol: f("#E6E6E6") }, { value: "o",  symbol: f("#AA9388") },
+          { value: "ru", symbol: f("#C6B4B7") }, { value: "sc", symbol: f("#F3EDC8") },
+          { value: "sm", symbol: f("#F3EDC8") }, { value: "sn", symbol: f("#FFFFAB") },
+          { value: "st", symbol: f("#F9EA98") }, { value: "su", symbol: f("#F3EDC8") }
+        ]
+      },
+      popupTemplate: {
+        title: "{Simplified}",
+        content: "<b>Age:</b> {Age}<br><b>Description:</b> {Simplifi_1}"
+      }
+    });
+    map.add(glacialGeology);
+
+    function f(hex){ // simple-fill helper
+      const rgb = hexToRgb(hex);
+      return { type: "simple-fill", color: [rgb.r, rgb.g, rgb.b, 0.9], outline: { color: [60,60,60,0.55], width: 0.4 } };
+    }
+    function hexToRgb(hex){ const h = hex.replace("#",""); return { r: parseInt(h.substring(0,2),16), g: parseInt(h.substring(2,4),16), b: parseInt(h.substring(4,6),16)};}
+
+    // Points of Interest — high contrast & halo
+    const poiLayer = new FeatureLayer({
+      url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Geologic_Points_of_Interest/FeatureServer/0",
+      title: "Geologic Points of Interest",
+      outFields: ["*"],
+      renderer: {
+        type: "simple",
+        symbol: {
+          type: "simple-marker",
+          style: "circle",
+          size: 12,
+          color: [254,80,0,1],                // bold orange
+          outline: { color: [255,255,255,0.95], width: 1.5 }
         }
-      });
-      map.add(bedrockGeology);
-      
-// Glacial Geology layer — MapUnit renderer with your hex colors
-const glacialGeology = new FeatureLayer({
-  url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/Surficial_Geology_View/FeatureServer/0",
-  title: "Glacial Geology",
-  outFields: ["*"],
+      },
+      popupTemplate: {
+        title: "{Title}",
+        content: (evt) => {
+          const a = evt.graphic.attributes || {};
+          const has = v => v != null && String(v).trim() !== "";
+          return `
+            <div style="line-height:1.45">
+              ${has(a.FeatureType)?`<div><b>Type:</b> ${a.FeatureType}</div>`:""}
+              ${has(a.Category)?`<div><b>Category:</b> ${a.Category}</div>`:""}
+              ${has(a.Description)?`<div style="margin-top:8px;">${a.Description}</div>`:""}
+              ${has(a.MoreInfoURL)?`<div style="margin-top:10px;"><a href="${a.MoreInfoURL}" target="_blank" rel="noopener">Learn more</a></div>`:""}
+            </div>
+          `;
+        }
+      }
+    });
+    map.add(poiLayer);
+
+    // --- IAT Trail & Connecting Routes (dual-layer for reliable casing) ---
+const trailURL = "https://services.arcgis.com/EeCmkqXss9GYEKIZ/arcgis/rest/services/IAT_Segments_CR/FeatureServer/0"; 
+// ^ add /0 for explicit layer index
+
+// 1) HALO (wide, semi-transparent, sits UNDER the top line)
+const sectionsHalo = new FeatureLayer({
+  url: trailURL,
+  title: "IAT (halo)",
+  listMode: "hide",
+  outFields: ["Segment", "length_mi", "Status"],
   renderer: {
     type: "unique-value",
-    field: "MapUnit",
-    defaultSymbol: {
-      type: "simple-fill",
-      color: [200, 200, 200, 0.15],
-      outline: { color: [120, 120, 120, 0.6], width: 0.4 }
-    },
+    field: "Status",
+    defaultSymbol: { type: "simple-line", color: [0,0,0,0.22], width: 6.0 },
     uniqueValueInfos: [
-      { value: "Ch", label: "Ch", symbol: { type: "simple-fill", color: [152,164,142,0.9], outline: { color: [80,80,80,0.6], width: 0.4 } } }, // #98A48E
-      { value: "Ci", label: "Ci", symbol: { type: "simple-fill", color: [192,218,148,0.9], outline: { color: [80,80,80,0.6], width: 0.4 } } }, // #C0DA94
-      { value: "Cl", label: "Cl", symbol: { type: "simple-fill", color: [152,164,142,0.9], outline: { color: [80,80,80,0.6], width: 0.4 } } }, // #98A48E
-      { value: "Cr", label: "Cr", symbol: { type: "simple-fill", color: [182,211,172,0.9], outline: { color: [80,80,80,0.6], width: 0.4 } } }, // #B6D3AC
-      { value: "Cs", label: "Cs", symbol: { type: "simple-fill", color: [153,193,138,0.9], outline: { color: [80,80,80,0.6], width: 0.4 } } }, // #99C18A
-      { value: "Hh", label: "Hh", symbol: { type: "simple-fill", color: [108,147,186,0.9], outline: { color: [60,60,60,0.6], width: 0.4 } } }, // #6C93BA
-      { value: "Hm", label: "Hm", symbol: { type: "simple-fill", color: [71,102,134,0.9],  outline: { color: [40,40,40,0.6], width: 0.4 } } }, // #476686
-      { value: "Hs", label: "Hs", symbol: { type: "simple-fill", color: [149,185,220,0.9], outline: { color: [60,60,60,0.6], width: 0.4 } } }, // #95B9DC
-      { value: "Mr", label: "Mr", symbol: { type: "simple-fill", color: [210,200,214,0.9], outline: { color: [90,90,90,0.6], width: 0.4 } } }, // #D2C8D6
-      { value: "b",  label: "b",  symbol: { type: "simple-fill", color: [184,193,188,0.9], outline: { color: [90,90,90,0.6], width: 0.4 } } }, // #B8C1BC
-      { value: "lp", label: "lp", symbol: { type: "simple-fill", color: [230,230,230,0.9], outline: { color: [100,100,100,0.6], width: 0.4 } } }, // #E6E6E6
-      { value: "o",  label: "o",  symbol: { type: "simple-fill", color: [170,147,136,0.9], outline: { color: [80,80,80,0.6], width: 0.4 } } }, // #AA9388
-      { value: "ru", label: "ru", symbol: { type: "simple-fill", color: [198,180,183,0.9], outline: { color: [90,90,90,0.6], width: 0.4 } } }, // #C6B4B7
-      { value: "sc", label: "sc", symbol: { type: "simple-fill", color: [243,237,200,0.9], outline: { color: [90,90,90,0.6], width: 0.4 } } }, // #F3EDC8
-      { value: "sm", label: "sm", symbol: { type: "simple-fill", color: [243,237,200,0.9], outline: { color: [90,90,90,0.6], width: 0.4 } } }, // #F3EDC8
-      { value: "sn", label: "sn", symbol: { type: "simple-fill", color: [255,255,171,0.9], outline: { color: [100,100,80,0.6], width: 0.4 } } }, // #FFFFAB
-      { value: "st", label: "st", symbol: { type: "simple-fill", color: [249,234,152,0.9], outline: { color: [100,95,60,0.6], width: 0.4 } } }, // #F9EA98
-      { value: "su", label: "su", symbol: { type: "simple-fill", color: [243,237,200,0.9], outline: { color: [90,90,90,0.6], width: 0.4 } } }  // #F3EDC8
+      { value: "Ice Age Trail", label: "Ice Age Trail", symbol: { type:"simple-line", color:[0,0,0,0.25], width: 6.2 } },
+      { value: "Connecting Route", label: "Connecting Route", symbol: { type:"simple-line", color:[0,0,0,0.20], width: 5.8, style:"dash" } }
     ]
-  },
-  popupTemplate: {
-    title: "{Simplified}",
-    content: "<b>Age:</b> {Age}<br><b>Description:</b> {Simplifi_1}"
-  }
-});
-map.add(glacialGeology);
-
-      // --- Geologic Points of Interest ---
-const poiLayer = new FeatureLayer({
-  url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Geologic_Points_of_Interest/FeatureServer/0",
-  title: "Geologic Points of Interest",
-  outFields: ["*"],
-
-  popupTemplate: {
-    title: "{Title}",
-    content: (evt) => {
-      const a = evt.graphic.attributes || {};
-      const has = v => v !== null && v !== undefined && String(v).trim() !== "";
-
-      // (Optional) debug: see actual field names/values in the console
-      // console.log("POI attrs:", a);
-
-      return `
-        <div style="line-height:1.45">
-          ${has(a.FeatureType) ? `<div><b>Type:</b> ${a.FeatureType}</div>` : ""}
-          ${has(a.Category) ? `<div><b>Category:</b> ${a.Category}</div>` : ""}
-          ${has(a.Description) ? `<div style="margin-top:8px;">${a.Description}</div>` : ""}
-          ${has(a.MoreInfoURL) ? `<div style="margin-top:10px;"><a href="${a.MoreInfoURL}" target="_blank" rel="noopener">Learn more</a></div>` : ""}
-        </div>
-      `;
-    }
   }
 });
 
-// Simple orange circle fill for POIs
-poiLayer.renderer = {
-  type: "simple",
-  symbol: {
-    type: "simple-marker",
-    style: "circle",
-    size: 11,
-    color: [254, 80, 0, 1],        // orange fill
-    outline: { color: [255, 255, 255, 0.9], width: 1 }
-  }
-};
-map.add(poiLayer);
-
-      // --- IAT Sections & Connecting Routes ---
-const sectionsPopupTemplate = {
-  title: "{Segment}",
-  content: [
-    {
-      type: "text",
-      text:
-        `<div style="margin-bottom:8px;"><b>Type:</b> {Status}</div>
-         <div><b>Length (mi):</b> {length_mi}</div>`
-    }
-  ]
-};
-
-const sections = new FeatureLayer({
-  url: "https://services.arcgis.com/EeCmkqXss9GYEKIZ/arcgis/rest/services/IAT_Segments_CR/FeatureServer",
+// 2) TOP STROKE (crisp amber + dashed CR)
+const sectionsTop = new FeatureLayer({
+  url: trailURL,
   title: "IAT Sections & Connecting Routes",
   outFields: ["Segment", "length_mi", "Status"],
   renderer: {
     type: "unique-value",
     field: "Status",
-    defaultSymbol: {
-      type: "simple-line",
-      color: [240, 170, 0, 1], // amber
-      width: 2.5
-    },
+    defaultSymbol: { type: "simple-line", color: [240,170,0,1], width: 2.8 },
     uniqueValueInfos: [
-      {
-        value: "Ice Age Trail", // <-- exact value from your data
-        label: "Ice Age Trail",
-        symbol: { type: "simple-line", color: [240, 170, 0, 1], width: 2.5 }
-      },
-      {
-        value: "Connecting Route", // <-- exact value from your data
-        label: "Connecting Route",
-        symbol: { type: "simple-line", color: [66, 66, 66, 1], width: 2.5, style: "dash" }
-      }
+      { value: "Ice Age Trail", label: "Ice Age Trail", symbol: { type:"simple-line", color:[240,170,0,1], width: 2.8 } },
+      { value: "Connecting Route", label: "Connecting Route", symbol: { type:"simple-line", color:[68,68,68,1], width: 2.6, style:"dash" } }
     ]
   },
   popupTemplate: {
     title: "{Segment}",
-    content: [
-      {
-        type: "text",
-        text:
-          `<div style="margin-bottom:8px;"><b>Type:</b> {Status}</div>
-           <div><b>Length (mi):</b> {length_mi}</div>`
-      }
-    ]
-  }
+    content: `<div style="margin-bottom:8px;"><b>Type:</b> {Status}</div><div><b>Length (mi):</b> {length_mi}</div>`
+  },
+  minScale: 0, maxScale: 0
 });
 
-map.add(sections); // add after geology layers so lines draw on top
+// Make sure ordering puts halo below top line, both ABOVE geology
+map.add(sectionsHalo);
+map.add(sectionsTop);
 
-// --- Parking Areas ---
-const parkingPopupTemplate = {
-  title: "Parking Area",
-  content:
-    `<div style="margin-bottom:6px;"><b>Type:</b> {Parking_Type}</div>
-     <div style="margin-bottom:6px;"><b>Description:</b> {Description}</div>
-     <div style="margin-bottom:6px;"><b>Fee:</b> {Fee}</div>
-     <div style="margin-bottom:6px;"><b>Overnight Parking:</b> {Overnight_Park}</div>
-     <div><b>Notes:</b> {Parking_Notes}</div>`
+    // Optional parking
+    const parking = new FeatureLayer({
+      url: "https://services.arcgis.com/EeCmkqXss9GYEKIZ/arcgis/rest/services/IAT_Parking/FeatureServer",
+      title: "Parking Areas",
+      outFields: ["Parking_Type", "Description", "Fee", "Overnight_Park", "Parking_Notes"],
+      popupTemplate: {
+        title: "Parking Area",
+        content: `<div style="margin-bottom:6px;"><b>Type:</b> {Parking_Type}</div>
+                  <div style="margin-bottom:6px;"><b>Description:</b> {Description}</div>
+                  <div style="margin-bottom:6px;"><b>Fee:</b> {Fee}</div>
+                  <div style="margin-bottom:6px;"><b>Overnight:</b> {Overnight_Park}</div>
+                  <div><b>Notes:</b> {Parking_Notes}</div>`
+      }
+    });
+    map.add(parking);
+
+    // Toggle Educator Panel from the header button
+const eduPanel = document.getElementById("eduPanel");
+const eduBtn   = document.getElementById("eduBtn");
+const eduClose = document.getElementById("eduClose");
+
+function showEdu(on){
+  eduPanel.style.display = on ? "block" : "none";
+  if (on) eduPanel.focus?.();
+}
+eduBtn.addEventListener("click", () => {
+  const visible = eduPanel.style.display !== "none";
+  showEdu(!visible);
+});
+eduClose.addEventListener("click", () => showEdu(false));
+// start visible for your screenshots; set to false if you want it hidden initially
+showEdu(true);
+
+// Modal improvements: close on Esc and background click
+(function modalInit(){
+  const modal = document.getElementById("myModal");
+  const closeBtn = modal.querySelector(".close");
+  window.onload = function(){ modal.style.display = "block"; };
+  closeBtn.onclick = function(){ modal.style.display = "none"; };
+  window.onclick = function(e){ if (e.target === modal) modal.style.display = "none"; };
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.style.display !== "none") modal.style.display = "none";
+  });
+})();
+
+
+    // Layer List (expanded) top-right
+    view.when(() => {
+  const layerList = new LayerList({ view });
+  view.ui.add(
+    new Expand({
+      view,
+      content: layerList,
+      expandIconClass: "esri-icon-layer-list",
+      expanded: true,
+      expandTooltip: "Layers"
+    }),
+    "bottom-right" // ⟵ move away from your legend
+  );
+});
+
+    // --- Symbol helpers (CIM for crisp casing/halo) ---
+    function casedLine(lineColorHex, innerW, outerColorHex, outerW, outerAlpha){
+      const inner = hexToRgb(lineColorHex), outer = hexToRgb(outerColorHex);
+      return {
+        type:"cim",
+        data:{
+          type:"CIMSymbolReference",
+          symbol:{
+            type:"CIMLineSymbol",
+            symbolLayers:[
+              { // outer "halo" / casing
+                type:"CIMSolidStroke", width: outerW,
+                color:[outer.r,outer.g,outer.b,outerAlpha]
+              },
+              { // inner primary line
+                type:"CIMSolidStroke", width: innerW,
+                color:[inner.r,inner.g,inner.b,1]
+              }
+            ]
+          }
+        }
+      };
+    }
+    function dashedCased(lineColorHex, innerW, outerColorHex, outerW, outerAlpha){
+      const s = casedLine(lineColorHex, innerW, outerColorHex, outerW, outerAlpha);
+      // add dash to the inner stroke
+      s.data.symbol.symbolLayers[1].effects = [{type:"CIMGeometricEffectDashes", dashTemplate:[8,6], lineDashEnding:"HalfPattern", controlPointEnding:"HalfPattern"}];
+      return s;
+    }
+
+    // --- Focus Mode: dim geology + amplify Trail & POIs (no LayerView.effect needed) ---
+let focusOn = false;
+
+// keep originals so we can restore cleanly
+const ORIGINALS = {
+  glacialOpacity: glacialGeology.opacity,
+  bedrockOpacity: bedrockGeology.opacity,
+  poiSize:
+    (poiLayer.renderer?.symbol && Number(poiLayer.renderer.symbol.size)) || 12,
+  trailWidthIAT: 2.8,
+  trailWidthCR: 2.6
 };
 
-const parking = new FeatureLayer({
-  url: "https://services.arcgis.com/EeCmkqXss9GYEKIZ/arcgis/rest/services/IAT_Parking/FeatureServer",
-  title: "Parking Areas",
-  outFields: ["Parking_Type", "Description", "Fee", "Overnight_Park", "Parking_Notes"],
-  popupTemplate: parkingPopupTemplate
+const focusBtn = document.getElementById("focusBtn");
+focusBtn.addEventListener("click", () => {
+  focusOn = !focusOn;
+  focusBtn.textContent = focusOn ? "Show Full Geology" : "Focus Trail";
+
+  if (focusOn) {
+    // 1) quiet the geology
+    glacialGeology.opacity = 0.25;
+    bedrockGeology.opacity  = 0.18;
+
+    // 2) make POIs pop a bit more
+    const poiR = poiLayer.renderer.clone();
+    poiR.symbol.size = ORIGINALS.poiSize + 4; // e.g., 12 -> 16
+    poiLayer.renderer = poiR;
+
+    // 3) thicken the Trail + CR (top stroke only; halo stays as-is)
+    const r = sectionsTop.renderer.clone();
+    r.uniqueValueInfos = r.uniqueValueInfos.map((u) => {
+      const sym = u.symbol.clone();
+      sym.width = (u.value === "Connecting Route") ? 3.2 : 3.6;
+      // keep CR dashed
+      if (u.value === "Connecting Route") sym.style = "dash";
+      return { ...u, symbol: sym };
+    });
+    sectionsTop.renderer = r;
+
+  } else {
+    // restore geology
+    glacialGeology.opacity = ORIGINALS.glacialOpacity;
+    bedrockGeology.opacity  = ORIGINALS.bedrockOpacity;
+
+    // restore POI size
+    const poiR = poiLayer.renderer.clone();
+    poiR.symbol.size = ORIGINALS.poiSize;
+    poiLayer.renderer = poiR;
+
+    // restore trail widths
+    const r = sectionsTop.renderer.clone();
+    r.uniqueValueInfos = r.uniqueValueInfos.map((u) => {
+      const sym = u.symbol.clone();
+      sym.width = (u.value === "Connecting Route")
+        ? ORIGINALS.trailWidthCR
+        : ORIGINALS.trailWidthIAT;
+      if (u.value === "Connecting Route") sym.style = "dash";
+      return { ...u, symbol: sym };
+    });
+    sectionsTop.renderer = r;
+  }
 });
 
-map.add(parking);
+    // --- Export Screenshot button (great for your mockups) ---
+    document.getElementById("shotBtn").addEventListener("click", async () => {
+      try{
+        const shot = await view.takeScreenshot({ format:"png", quality: 1, area: { x:0, y:0, width:view.width, height:view.height } });
+        const a = document.createElement("a");
+        a.href = shot.dataUrl; a.download = `IAT_geology_screenshot_${Date.now()}.png`;
+        a.click();
+      }catch(e){ console.warn(e); }
+    });
 
-      // Add Layer List widget
-      view.when(() => {
-        const layerList = new LayerList({ view: view });
-        view.ui.add(new Expand({
-          view: view,
-          content: layerList,
-          expandIconClass: "esri-icon-layer-list",
-          expandTooltip: "Layers",
-          expanded: true
-        }), "top-right");
-      });
+    // Welcome modal behavior
+    (function modalInit(){
+      const modal = document.getElementById("myModal");
+      const closeBtn = modal.querySelector(".close");
+      window.onload = function(){ modal.style.display = "block"; };
+      closeBtn.onclick = function(){ modal.style.display = "none"; };
+      window.onclick = function(event){ if (event.target === modal) modal.style.display = "none"; };
+    })();
 
-      
-    }); // End require
-  </script>
-  <script>
-  // Placeholder action for the Educator Resources button
-  const eduBtn = document.getElementById("eduBtn");
-  if (eduBtn) {
-    eduBtn.addEventListener("click", () => {
-      // Replace this later with your real behavior (open a modal, navigate, etc.)
+    // Educator resources (placeholder)
+    document.getElementById("eduBtn").addEventListener("click", () => {
       alert("Educator Resources coming soon!");
     });
-  }
-</script>
+
+  });
+  </script>
 </body>
 </html>
