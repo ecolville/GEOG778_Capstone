@@ -273,7 +273,6 @@
 
   <div style="margin-left:auto; display:flex; gap:8px;">
     <button id="focusBtn" class="btn" title="Toggle Focus: highlight Trail & POIs">Focus Trail</button>
-    <button id="shotBtn" class="btn" title="Export a high-res map image">Export Screenshot</button>
     <button id="eduBtn" class="btn btn-accent" type="button" aria-label="Educator Resources" title="Educator Resources">Educator Resources</button>
   </div>
 </div>
@@ -650,15 +649,7 @@ focusBtn.addEventListener("click", () => {
   }
 });
 
-    // --- Export Screenshot button (great for your mockups) ---
-    document.getElementById("shotBtn").addEventListener("click", async () => {
-      try{
-        const shot = await view.takeScreenshot({ format:"png", quality: 1, area: { x:0, y:0, width:view.width, height:view.height } });
-        const a = document.createElement("a");
-        a.href = shot.dataUrl; a.download = `IAT_geology_screenshot_${Date.now()}.png`;
-        a.click();
-      }catch(e){ console.warn(e); }
-    });
+  
 
     // Welcome modal behavior
     (function modalInit(){
