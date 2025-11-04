@@ -364,16 +364,20 @@
 
     // --- Layers ---
     const bedrockGeology = new FeatureLayer({
-      url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/Simplified_Marathon_Bedrock/FeatureServer",
-      title: "Bedrock Geology",
-      outFields: ["simple", "Descr", "Age"],
-      opacity: 0.65,
-      blendMode: "multiply",
-      popupTemplate: {
-        title: "Bedrock Geology",
-        content: "<b>Rock Name:</b> {simple}<br><b>Age:</b> {Age}<br><b>Description:</b> {Descr}<br><br><i>Classroom prompt:</i> How does this bedrock type influence the land above it?"
-      }
-    });
+  url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/Bedrock_All_symbolized/FeatureServer",
+  title: "Bedrock Geology",
+  outFields: ["UnitName", "Age", "RockType", "Descr"],
+  opacity: 0.65,
+  blendMode: "multiply",
+  popupTemplate: {
+    title: "{UnitName}",
+    content: `
+      <b>Age:</b> {Age}<br>
+      <b>Rock Type:</b> {RockType}<br>
+      <b>Description:</b> {Descr}
+    `
+  }
+});
     map.add(bedrockGeology);
 
     // Glacial Geology (your palette, softened)
