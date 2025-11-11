@@ -19,8 +19,16 @@
       --cr-dash:#444444;
 
       /* POIs */
-      --poi:#FE5000;
-      --poi-halo:#ffffff;
+       --poi-kettle: var(--g-blue3);       /* Hs 95B9DC vibe */
+  --poi-iwlp:   var(--g-cream1);      /* F3EDC8 with dark outline */
+  --poi-humm:   var(--g-green3);      /* B6D3AC */
+  --poi-moraine:var(--g-green1);      /* 98A48E */
+  --poi-outwash:var(--g-yellow2);     /* F9EA98 */
+  --poi-tunnel: var(--g-blue2);       /* 476686 */
+  --poi-bedrock:var(--g-violet);      /* D2C8D6 */
+  --poi-overlk: var(--g-neutral1);    /* B8C1BC */
+  --poi-trail:  var(--amber-800);     /* for trailheads/interpretive */
+  --poi-outline: rgba(14,17,22,.65);  /* ink-900 */;
 
       /* UI SHELL */
       --ink-900:#0E1116;
@@ -112,8 +120,8 @@
       border:1px solid var(--glass-border);
       backdrop-filter: blur(8px);
     }
-    .esri-popup__header { background: var(--ink-700); color: var(--text-100); }
-    .esri-popup__content { background: var(--tint); color: var(--text-100); }
+   .esri-popup__header { background: linear-gradient(180deg, var(--ink-700), var(--ink-800)); }
+.esri-popup__content { background: linear-gradient(180deg, rgba(108,147,186,.08), rgba(24,29,40,.35)); }
     .esri-layer-list__item-label, .esri-search__input { color: var(--text-100); }
 
     .esri-widget__heading { color: var(--text-300) !important; }
@@ -422,7 +430,7 @@
 
     // Points of Interest — high contrast & halo
     const poiLayer = new FeatureLayer({
-      url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Geologic_Points_of_Interest/FeatureServer/0",
+      url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/POIs/FeatureServer",
       title: "Geologic Points of Interest",
       outFields: ["*"],
       renderer: {
