@@ -19,16 +19,8 @@
       --cr-dash:#444444;
 
       /* POIs */
-       --poi-kettle: var(--g-blue3);       /* Hs 95B9DC vibe */
-  --poi-iwlp:   var(--g-cream1);      /* F3EDC8 with dark outline */
-  --poi-humm:   var(--g-green3);      /* B6D3AC */
-  --poi-moraine:var(--g-green1);      /* 98A48E */
-  --poi-outwash:var(--g-yellow2);     /* F9EA98 */
-  --poi-tunnel: var(--g-blue2);       /* 476686 */
-  --poi-bedrock:var(--g-violet);      /* D2C8D6 */
-  --poi-overlk: var(--g-neutral1);    /* B8C1BC */
-  --poi-trail:  var(--amber-800);     /* for trailheads/interpretive */
-  --poi-outline: rgba(14,17,22,.65);  /* ink-900 */;
+      --poi-main: #e1b46c; /* warm amber-sand tone */
+  --poi-outline: rgba(14,17,22,0.7); /* dark gray outline */
 
       /* UI SHELL */
       --ink-900:#0E1116;
@@ -428,38 +420,42 @@
     }
     function hexToRgb(hex){ const h = hex.replace("#",""); return { r: parseInt(h.substring(0,2),16), g: parseInt(h.substring(2,4),16), b: parseInt(h.substring(4,6),16)};}
 
-    // Points of Interest — high contrast & halo
-    const poiLayer = new FeatureLayer({
-      url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/POIs/FeatureServer",
-      title: "Geologic Points of Interest",
-      outFields: ["*"],
-      renderer: {
-        type: "simple",
-        symbol: {
-          type: "simple-marker",
-          style: "circle",
-          size: 12,
-          color: [254,80,0,1],                // bold orange
-          outline: { color: [255,255,255,0.95], width: 1.5 }
-        }
-      },
-      popupTemplate: {
-        title: "{Title}",
-        content: (evt) => {
-          const a = evt.graphic.attributes || {};
-          const has = v => v != null && String(v).trim() !== "";
-          return `
-            <div style="line-height:1.45">
-              ${has(a.FeatureType)?`<div><b>Type:</b> ${a.FeatureType}</div>`:""}
-              ${has(a.Category)?`<div><b>Category:</b> ${a.Category}</div>`:""}
-              ${has(a.Description)?`<div style="margin-top:8px;">${a.Description}</div>`:""}
-              ${has(a.MoreInfoURL)?`<div style="margin-top:10px;"><a href="${a.MoreInfoURL}" target="_blank" rel="noopener">Learn more</a></div>`:""}
-            </div>
-          `;
-        }
+    // Helper for tidy conditional markup
+const has = (v) => v != null && String(v).trim() !== "";
+
+// --- Geologic Points of Interest (single elegant style, uses your fields) ---
+const poiLayer = new FeatureLayer({
+  url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/POIs/FeatureServer",
+  title: "Geologic Points of Interest",
+  outFields: ["*"],
+  renderer: {
+    type: "simple",
+    symbol: {
+      type: "simple-marker",
+      style: "circle",
+      size: 11,
+      color: getComputedStyle(document.documentElement).getPropertyValue('--poi-main').trim(),
+      outline: {
+        color: getComputedStyle(document.documentElement).getPropertyValue('--poi-outline').trim(),
+        width: 1.2
       }
-    });
-    map.add(poiLayer);
+    }
+  },
+  popupTemplate: {
+    // Your fields: Name, Feature_Type, Description
+    title: "{Name}",
+    content: (e) => {
+      const a = e.graphic?.attributes ?? {};
+      return `
+        <div style="line-height:1.45">
+          ${has(a.Feature_Type) ? `<div><b>Type:</b> ${a.Feature_Type}</div>` : ""}
+          ${has(a.Description)  ? `<div style="margin-top:8px;">${a.Description}</div>` : ""}
+        </div>
+      `;
+    }
+  }
+});
+map.add(poiLayer);
 
     // --- IAT Trail & Connecting Routes (dual-layer for reliable casing) ---
 const trailURL = "https://services.arcgis.com/EeCmkqXss9GYEKIZ/arcgis/rest/services/IAT_Segments_CR/FeatureServer/0"; 
