@@ -1,0 +1,178 @@
+    :root{
+      /* TRAIL BRAND / ACCENTS */
+      --amber: #F0AA00;
+      --amber-800:#b97f00;
+      --cr-dash:#444444;
+
+      /* POIs */
+      --poi-main: #7CC7FF;
+      --poi-outline: rgba(14,17,22,0.9);
+
+      /* UI SHELL */
+      --ink-900:#0E1116;
+      --ink-800:#151922;
+      --ink-700:#1C2230;
+      --ink-600:#242C3B;
+      --ink-500:#2F384B;
+      --text-100:#ECF2F8;
+      --text-300:#C3CDD8;
+      --text-500:#90A0B5;
+      --glass: rgba(24,29,40,0.62);
+      --glass-border: rgba(255,255,255,0.09);
+
+      /* GEOLOGY PALETTE */
+      --g-green1:#98A48E; --g-green2:#C0DA94; --g-green3:#B6D3AC; --g-green4:#99C18A;
+      --g-blue1:#6C93BA; --g-blue2:#476686; --g-blue3:#95B9DC;
+      --g-violet:#D2C8D6; --g-neutral1:#B8C1BC; --g-neutral2:#E6E6E6;
+      --g-brown1:#AA9388; --g-rose:#C6B4B7; --g-cream1:#F3EDC8; --g-yellow1:#FFFFAB; --g-yellow2:#F9EA98;
+
+      --tint: rgba(108,147,186,0.10);
+    }
+
+    html, body { height:100%; width:100%; margin:0; padding:0; }
+    body { font-family: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans";
+           background: var(--ink-900); color: var(--text-100); }
+
+      .mapShell { position: relative; }     
+
+    /* Header */
+    .header{
+  position: absolute;           
+  top: 16px; left: 16px;        
+  right: auto;                  
+  z-index: 5;                   
+  display:flex; align-items:center; gap:12px;
+  background: linear-gradient(180deg, rgba(34,41,56,0.85), rgba(24,29,40,0.78));
+  border:1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  padding:10px 14px; border-radius:14px; box-shadow: 0 10px 30px rgba(0,0,0,.25);
+}
+    .brand { display:flex; align-items:center; gap:10px; }
+    .chip { width:14px; height:14px; border-radius:999px; background:var(--amber);
+      box-shadow: 0 0 0 2px rgba(0,0,0,.25), 0 0 10px rgba(240,170,0,.6) inset; }
+    .title { margin:0; font-size:15px; letter-spacing:.3px; color:var(--text-100); }
+    .header p.tip { font-size: 12px; color: var(--text-500); margin: 0 0 0 12px; }
+
+    /* Buttons */
+    .btn { appearance:none; border:none; cursor:pointer;
+      background:linear-gradient(180deg, #2E3A52, #253148);
+      color:var(--text-100); padding:8px 12px; border-radius:10px; font-size:13px; font-weight:600;
+      border:1px solid var(--glass-border); transition: transform .06s ease, box-shadow .2s ease, background .2s ease; }
+    .btn:hover { box-shadow:0 6px 14px rgba(0,0,0,.25); }
+    .btn:active { transform: translateY(1px); }
+    .btn-accent { background: linear-gradient(180deg, #ff7a1a, #e75d00); color:#141414; border:1px solid rgba(0,0,0,.15); }
+    .btn-accent:hover { box-shadow:0 6px 20px rgba(254, 80, 0, .35); }
+    .btn-min { padding: 0 8px; line-height: 20px; height: 24px; border-radius: 8px; background: rgba(255,255,255,.06); color: var(--text-100); }
+
+    /* Esri widgets theming tweaks */
+    .esri-ui .esri-widget { background: var(--glass); color: var(--text-100); border:1px solid var(--glass-border); backdrop-filter: blur(8px); }
+    .esri-popup__header { background: linear-gradient(180deg, var(--ink-700), var(--ink-800)); }
+    .esri-popup__content { background: linear-gradient(180deg, rgba(108,147,186,.08), rgba(24,29,40,.35)); }
+    .esri-layer-list__item-label, .esri-search__input { color: var(--text-100); }
+    .esri-widget__heading { color: var(--text-300) !important; }
+
+    /* LayerList dark fix */
+    .esri-layer-list, .esri-layer-list__list, .esri-layer-list__item, .esri-layer-list__item-label {
+      background-color: var(--glass) !important; color: var(--text-100) !important;
+    }
+    .esri-layer-list__item-actions-menu, .esri-layer-list__item-actions-list, .esri-layer-list__item-actions-button {
+      background-color: var(--ink-800) !important; color: var(--text-100) !important; border-color: var(--glass-border) !important;
+    }
+    .esri-layer-list__item:hover { background-color: rgba(255,255,255,0.06) !important; }
+
+    /* Keep default widgets below header */
+    .esri-ui-top-left { top: 90px !important; }
+
+    /* ---------- App layout: map + right educator sidebar ---------- */
+    .app{
+      position: fixed; inset: 0;
+      display: grid; grid-template-columns: 1fr 360px; grid-template-rows: 1fr;
+      transition: grid-template-columns .24s ease;
+    }
+    .app.collapsed{ grid-template-columns: 1fr 0px; }
+
+    #viewDiv { width: 100%; height: 100%; }
+
+    .eduSide{
+      background: var(--glass); border-left: 1px solid var(--glass-border);
+      color: var(--text-100); backdrop-filter: blur(10px);
+      box-shadow: 0 0 30px rgba(0,0,0,.25);
+      overflow: hidden; display: flex; flex-direction: column;
+    }
+    .eduSide__head{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 12px; background: linear-gradient(180deg, rgba(34,41,56,.9), rgba(24,29,40,.85));
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .eduSide__head h2{ margin:0; font-size:14px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-300); }
+    .eduSide__body{ padding:12px 14px; overflow:auto; }
+    .eduSide__body h3{ margin:10px 0 6px; font-size:12px; color:var(--text-300); text-transform:uppercase; letter-spacing:.10em; }
+
+    .eduTabs{
+      display:flex;
+      gap:6px;
+      margin:4px 0 10px;
+      border-bottom:1px solid rgba(255,255,255,0.06);
+      padding-bottom:4px;
+    }
+    .eduTabBtn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.04);
+      color:var(--text-300);
+      transition:background .15s ease, color .15s ease;
+    }
+    .eduTabBtn.is-active{
+      background:var(--amber);
+      color:#111;
+    }
+    .eduTabPanel{ display:block; }
+    .eduTabPanel[hidden]{ display:none; }
+    .eduSide__body h4{
+      margin:8px 0 4px;
+      font-size:12px;
+      color:var(--text-300);
+      text-transform:uppercase;
+      letter-spacing:.10em;
+    }
+
+    .pdfList, .promptList { margin: 6px 0 12px; padding-left: 0; list-style: none; }
+    .pdfList li, .promptList li { margin: 6px 0; line-height: 1.35; }
+    .pdfList a { display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--text-100);
+      padding:6px 8px; border-radius:8px; transition: background .15s ease; }
+    .pdfList a::before { content:"📄"; font-size:16px; opacity:.9; }
+    .pdfList a:hover { background: rgba(255,255,255,.06); text-decoration: underline; }
+
+    /* Modal (always show on load until closed) */
+    .modal{ position: fixed; z-index: 100; inset: 0; background: rgba(0,0,0,.5); }
+    .modal[hidden]{ display: none !important; }
+    .modal-content {
+      width: min(820px, 92%); margin: 6% auto; border-radius: 18px; padding: 0; overflow: hidden;
+      background: linear-gradient(180deg, #101520, #0c1019);
+      border: 1px solid var(--glass-border); box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+    .modal-head { display:flex; align-items:center; gap:10px; padding:12px 16px;
+      background: linear-gradient(180deg, rgba(34,41,56,.9), rgba(24,29,40,.85)); border-bottom:1px solid var(--glass-border); }
+    .modal-head h2 { margin:0; font-size:18px; color:var(--text-100); }
+    .modal .close { margin-left:auto; cursor:pointer; color:var(--text-300); font-size:20px; font-weight:700; background: rgba(255,255,255,.06);
+      width:28px; height:28px; line-height:26px; text-align:center; border-radius:8px; }
+    .modal .close:hover{ color:#fff; }
+    .modal-body { display:grid; grid-template-columns: 140px 1fr; gap:16px; padding:16px; }
+    .modal-body img { border-radius:10px; width:110px; height:auto; margin:6px auto 0; display:block; }
+    .modal-text{ color:var(--text-300); }
+    .modal-text ul { margin:10px 0 0 18px; }
+
+    @media (max-width: 800px){
+      .app{ grid-template-columns: 1fr; }
+      .eduSide{ position:absolute; right:0; top:0; bottom:0; width:min(92vw, 360px); }
+      .app.collapsed .eduSide{ display:none; }
+    }
+    @media (max-width: 640px){
+      .modal-body { grid-template-columns: 1fr; }
+    }
