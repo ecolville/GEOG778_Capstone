@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>About This Map · Ice Age Trail Educator Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="Overview, purpose, and teacher resources for the Educator Geologic Map of the Ice Age Trail."
+  />
+
+  <style>
+    :root {
+      --amber: #F0AA00;
+      --amber-800: #b97f00;
+      --ink-900: #0E1116;
+      --ink-800: #151922;
+      --ink-700: #1C2230;
+      --ink-600: #242C3B;
+      --text-100: #ECF2F8;
+      --text-300: #C3CDD8;
+      --text-500: #90A0B5;
+      --glass: rgba(24, 29, 40, 0.8);
+      --glass-border: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      background: radial-gradient(circle at top, #20283a 0, #0b0f18 52%, #05060b 100%);
+      color: var(--text-100);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page {
+      max-width: 880px;
+      width: 100%;
+      margin: 32px auto 40px;
+      padding: 0 16px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--ink-800), var(--ink-900));
+      border-radius: 18px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55);
+      padding: 22px 22px 26px;
+    }
+
+    header.page-header {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .badge {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      border-radius: 999px;
+      padding: 3px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(240, 170, 0, 0.12);
+      color: var(--amber);
+    }
+
+    .logo-pill {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #ffe7a4 0, #f0aa00 45%, #7f4b00 100%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #1b1300;
+      font-weight: 700;
+      font-size: 18px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
+      flex-shrink: 0;
+    }
+
+    .title-block h1 {
+      margin: 2px 0 4px;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #fff;
+    }
+
+    .title-block p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-500);
+    }
+
+    main {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 800px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    section {
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      margin: 14px 0 6px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    h3 {
+      margin: 12px 0 4px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-100);
+    }
+
+    p {
+      margin: 4px 0 10px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-300);
+    }
+
+    ul {
+      margin: 6px 0 10px 18px;
+      padding-left: 0;
+      font-size: 14px;
+      color: var(--text-300);
+    }
+
+    li {
+      margin-bottom: 4px;
+      line-height: 1.5;
+    }
+
+    .callout {
+      margin-bottom: 14px;
+      border-radius: 12px;
+      background: radial-gradient(circle at top left, rgba(240, 170, 0, 0.25), rgba(12, 16, 25, 0.95));
+      border: 1px solid rgba(240, 170, 0, 0.28);
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--text-100);
+    }
+
+    .callout strong {
+      color: #fff;
+    }
+
+    a {
+      color: var(--amber);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .pill-label {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 11px;
+      color: var(--text-500);
+      margin-bottom: 4px;
+    }
+
+    .subdued {
+      font-size: 13px;
+      color: var(--text-500);
+    }
+
+    .pdf-list,
+    .link-list {
+      list-style: none;
+      margin: 6px 0 10px;
+      padding-left: 0;
+    }
+
+    .pdf-list li,
+    .link-list li {
+      margin-bottom: 6px;
+    }
+
+    .pdf-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 9px;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 14px;
+      color: var(--text-100);
+      text-decoration: none;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
+    }
+
+    .pdf-link span.icon {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .pdf-link:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(240, 170, 0, 0.55);
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+
+    .tagline {
+      font-size: 13px;
+      color: var(--text-500);
+      margin-top: 4px;
+    }
+
+    .btn-row {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(180deg, #2E3A52, #253148);
+      color: var(--text-100);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      text-decoration: none;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .btn-amber {
+      background: linear-gradient(180deg, #feba2a, #f0aa00);
+      color: #241400;
+      border-color: rgba(0, 0, 0, 0.18);
+    }
+
+    footer.page-footer {
+      margin-top: 18px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 12px;
+      color: var(--text-500);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    @media (max-width: 540px) {
+      header.page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <header class="page-header">
+        <div class="logo-pill" aria-hidden="true">I</div>
+        <div class="title-block">
+          <div class="badge">Ice Age Trail · Geology · Classrooms</div>
+          <h1>About This Map (For Teachers)</h1>
+          <p>
+            A companion page for the Educator Geologic Map of the Ice Age Trail.
+          </p>
+        </div>
+      </header>
+
+      <div class="callout">
+        <strong>Who is this for?</strong>
+        This page is written for Wisconsin teachers, volunteers, and trip leaders
+        who want to feel comfortable talking about the landscape while hiking the Ice Age Trail with students.
+      </div>
+
+      <main>
+        <!-- LEFT COLUMN: PURPOSE & HOW-TO -->
+        <div>
+          <section aria-labelledby="why-title">
+            <h2 id="why-title">Why this map exists</h2>
+            <p>
+              The Educator Geologic Map of the Ice Age Trail was designed to help teachers quickly connect
+              what students see on the trail to the science they are learning in class. You do not need to
+              be a geologist. The goal is to give you just enough background to notice landforms, name them,
+              and talk about how glaciers and bedrock shape today’s landscapes.
+            </p>
+            <p>
+              Many Wisconsin students walk right past kettles, moraines, and bedrock outcrops without realizing
+              they are looking at evidence of ancient ice sheets and long-lasting geologic processes. This map
+              and its teacher resources aim to make those “invisible stories” visible.
+            </p>
+          </section>
+
+          <section aria-labelledby="how-title">
+            <h2 id="how-title">How to use the map with students</h2>
+
+            <div class="pill-label">Before your trip</div>
+            <ul>
+              <li>Open the map and zoom to the Ice Age Trail segment near your school or field site.</li>
+              <li>Click an <strong>orange trail segment</strong> to open the teacher panel on the right.</li>
+              <li>Read the <em>Overview</em> tab for a short, teacher-friendly description of what makes that segment special.</li>
+              <li>Skim the <em>Geologic Concepts</em> tab to see bedrock, glacial history, and key ideas you may want to highlight.</li>
+              <li>Choose one or two activities from the <em>Activities</em> tab to use in class or along the trail.</li>
+            </ul>
+
+            <div class="pill-label">On the trail</div>
+            <ul>
+              <li>Use the overview and geologic story as talking points at trailheads or points of interest.</li>
+              <li>Ask students to look for shapes in the land: closed depressions (kettles), ridges (moraines, eskers), or steep bluffs.</li>
+              <li>Pause at light blue dots (geologic points of interest) to read short explanations of specific features.</li>
+            </ul>
+
+            <div class="pill-label">After your trip</div>
+            <ul>
+              <li>Return to the map with students and have them locate places they remember from the hike.</li>
+              <li>Use the same activities or printable guides for reflection, journaling, or simple models back in the classroom.</li>
+            </ul>
+          </section>
+
+          <section aria-labelledby="saunters-title">
+            <h2 id="saunters-title">The Saunters program</h2>
+            <p>
+              The Ice Age Trail Alliance’s Saunters program partners with schools to get students outside
+              for repeated walks on the trail. This map is designed to complement that work by giving both
+              teachers and volunteers accessible, local geology background for each segment.
+            </p>
+            <ul class="link-list">
+              <li>
+                <a href="https://www.iceagetrail.org/saunters/" target="_blank" rel="noopener">
+                  Ice Age Trail Alliance: Saunters
+                </a>
+              </li>
+              <li>
+                <a href="https://storymaps.arcgis.com/stories/e039100982854c0db10e697349beec10"
+                   target="_blank" rel="noopener">
+                  Saunters StoryMap
+                </a>
+              </li>
+            </ul>
+            <p class="subdued">
+              You can use this map whether or not you are formally participating in Saunters. Any class
+              trip to the Ice Age Trail can benefit from a little extra geologic story-telling.
+            </p>
+          </section>
+        </div>
+
+        <!-- RIGHT COLUMN: STANDARDS & PRINTABLE GUIDES -->
+        <div>
+          <section aria-labelledby="standards-title">
+            <h2 id="standards-title">Standards at a glance</h2>
+            <p>
+              Activities and segment descriptions are designed to support the Wisconsin Science Standards
+              and Environmental Literacy &amp; Sustainability (ELS) standards, especially:
+            </p>
+            <ul>
+              <li><strong>ESS2.A:</strong> Earth materials and systems</li>
+              <li><strong>ESS2.C:</strong> The roles of water in Earth’s surface processes</li>
+              <li><strong>ESS3.B:</strong> Natural hazards</li>
+            </ul>
+            <p>
+              Many lessons also connect naturally to ELS standards, including:
+            </p>
+            <ul>
+              <li><strong>EES2–EES4:</strong> Interactions of Earth systems, communities, and human choices.</li>
+            </ul>
+            <p class="subdued">
+              Each printable teacher guide lists more specific grade bands and standards so you can quickly
+              align your field experiences with your curriculum map.
+            </p>
+          </section>
+
+          <section aria-labelledby="resources-title">
+            <h2 id="resources-title">Printable teacher guides</h2>
+            <p>
+              These short PDFs provide simple explanations and diagrams you can use before or after walking
+              a trail segment. They are written for teachers but may also be used with students.
+            </p>
+
+            <ul class="pdf-list">
+              <li>
+                <a class="pdf-link" href="docs/How_Do_Moraines_Form.pdf" target="_blank" rel="noopener">
+                  <span class="icon">📄</span>
+                  <span>How Do Moraines Form?</span>
+                </a>
+              </li>
+              <li>
+                <a class="pdf-link" href="docs/How_Do_Drumlins_Form.pdf" target="_blank" rel="noopener">
+                  <span class="icon">📄</span>
+                  <span>How Do Drumlins Form?</span>
+                </a>
+              </li>
+              <li>
+                <a class="pdf-link" href="docs/What_Are_Eskers.pdf" target="_blank" rel="noopener">
+                  <span class="icon">📄</span>
+                  <span>What Are Eskers?</span>
+                </a>
+              </li>
+              <li>
+                <a class="pdf-link" href="docs/What_Are_Kettles_and_Kettle_Lakes.pdf"
+                   target="_blank" rel="noopener">
+                  <span class="icon">📄</span>
+                  <span>What Are Kettles and Kettle Lakes?</span>
+                </a>
+              </li>
+              <li>
+                <a class="pdf-link" href="docs/How_Glaciers_Shape_the_Land.pdf"
+                   target="_blank" rel="noopener">
+                  <span class="icon">📄</span>
+                  <span>How Glaciers Shape the Land</span>
+                </a>
+              </li>
+            </ul>
+
+            <p class="tagline">
+              You are welcome to print, annotate, or adapt these guides for use with your students.
+            </p>
+          </section>
+
+          <section aria-labelledby="tips-title">
+            <h2 id="tips-title">Tips for first-time trail teachers</h2>
+            <ul>
+              <li>Start with one nearby segment and one or two geologic ideas rather than trying to cover everything.</li>
+              <li>Use student questions to guide how deep you go into the science.</li>
+              <li>Invite students to sketch the landforms they notice and label them back in class.</li>
+              <li>Partner with another teacher, volunteer, or Saunters leader to share the talking.</li>
+            </ul>
+          </section>
+        </div>
+      </main>
+
+      <div class="btn-row">
+        <a class="btn btn-amber" href="index.html">
+          ← Back to Map
+        </a>
+        <a class="btn" href="https://www.iceagetrail.org/" target="_blank" rel="noopener">
+          Ice Age Trail Alliance
+        </a>
+      </div>
+
+      <footer class="page-footer">
+        <span>Educator Geologic Map of the Ice Age Trail</span>
+        <span>For classroom and field use.</span>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>

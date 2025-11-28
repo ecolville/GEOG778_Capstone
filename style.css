@@ -35,23 +35,41 @@
 
       .mapShell { position: relative; }     
 
-    /* Header */
-    .header{
-  position: absolute;           
-  top: 16px; left: 16px;        
-  right: auto;                  
-  z-index: 5;                   
-  display:flex; align-items:center; gap:12px;
+  .header {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  white-space: nowrap;
+
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   background: linear-gradient(180deg, rgba(34,41,56,0.85), rgba(24,29,40,0.78));
-  border:1px solid var(--glass-border);
+  border: 1px solid var(--glass-border);
   backdrop-filter: blur(10px);
-  padding:10px 14px; border-radius:14px; box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  padding: 6px 10px;              
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
 }
-    .brand { display:flex; align-items:center; gap:10px; }
-    .chip { width:14px; height:14px; border-radius:999px; background:var(--amber);
-      box-shadow: 0 0 0 2px rgba(0,0,0,.25), 0 0 10px rgba(240,170,0,.6) inset; }
-    .title { margin:0; font-size:15px; letter-spacing:.3px; color:var(--text-100); }
-    .header p.tip { font-size: 12px; color: var(--text-500); margin: 0 0 0 12px; }
+
+.title {
+  margin: 0;
+  font-size: 20px;                
+  letter-spacing: .3px;
+  color: var(--text-100);
+  font-weight: 600;
+  flex-shrink: 0;                  
+  margin-right: 12px;
+}
+
+.header p.tip {
+  margin: 0 10px;                 
+  font-size: 11px;               
+  color: var(--text-500);
+}
 
     /* Buttons */
     .btn { appearance:none; border:none; cursor:pointer;
@@ -150,7 +168,7 @@
     .pdfList a:hover { background: rgba(255,255,255,.06); text-decoration: underline; }
 
     /* Modal (always show on load until closed) */
-.modal{ position: fixed; z-index: 100; inset: 0; background: rgba(0,0,0,.5); }
+.modal{ position: fixed; z-index: 9999; inset: 0; background: rgba(0,0,0,.5); }
 .modal[hidden]{ display: none !important; }
 .modal-content {
   width: min(820px, 92%);
@@ -194,6 +212,76 @@
 .modal-body--edu .modal-text {
   max-width: 640px;
   margin: 0 auto;
+}
+
+/* Intro modal: image + richer text styling */
+.modal-body--intro {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 18px;
+  padding: 18px 20px;
+  align-items: flex-start;
+}
+
+.modal-body--intro img {
+  width: 100px;
+  height: auto;
+  border-radius: 12px;
+  margin-top: 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+/* Slightly brighter, more engaging text for intro */
+.modal-text--intro {
+  color: var(--text-100);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-text--intro p {
+  margin: 0 0 10px;
+}
+
+/* Small branded pill at the top */
+.intro-kicker {
+  margin: 0 0 8px;
+}
+
+.intro-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(240,170,0,0.18);
+  color: var(--amber);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+/* Subheadings with a subtle accent line */
+.modal-subtitle {
+  margin: 14px 0 6px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--text-300);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 8px;
+}
+
+/* List styling for intro text */
+.intro-list {
+  margin: 6px 0 10px;
+  padding-left: 16px;
+}
+
+.intro-list li {
+  margin-bottom: 6px;
+}
+
+.intro-label {
+  color: var(--amber);
+  font-weight: 600;
 }
 
     @media (max-width: 800px){
