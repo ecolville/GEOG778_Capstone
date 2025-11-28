@@ -31,6 +31,9 @@
     const searchWidget = new Search({ view, suggestionsEnabled: true, maxSuggestions: 3 });
     view.ui.add(new Expand({ view, content: searchWidget, expandIconClass: "esri-icon-search", expandTooltip: "Search" }), { position: "top-left", index: 2 });
 
+    const showTeacherPanelBtn = document.getElementById("showTeacherPanelBtn");
+
+
     // Layers
     const bedrockGeology = new FeatureLayer({
       url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/Bedrock_All_symbolized/FeatureServer",
@@ -180,155 +183,23 @@
       });
     });
 
-     // ----- Segment content (start with Iola Ski Hill Segment) -----
-    const segmentContent = {
-      "New Hope": {
-        overview: `
-          <p>The Iola Ski Hill segment sits where ancient granite bedrock meets
-          young glacial deposits. It’s an excellent place to show students how
-          very old rocks and very recent glacial processes work together to shape
-          Wisconsin’s hills and valleys.</p>
-        `,
-        bedrock: `
-          <p><strong>Wolf River Granite</strong> and <strong>Red River Adamellite</strong>
-          form the “basement rock” beneath this segment. These Middle Proterozoic
-          intrusive rocks are about 1.5 billion years old, cooled slowly from magma
-          deep underground, and now support the glacial hills above.</p>
-          <p><em>Kid version:</em> These hills sit on extremely old granite that formed
-          like fudge cooling deep inside the Earth—long before dinosaurs existed.</p>
-        `,
-        glacial: `
-          <p>Late Pleistocene glaciers covered this area, leaving behind
-          <strong>morainal glacial sediment (Holy Hill Formation)</strong> and
-          <strong>collapsed meltwater-stream sediment</strong>. As the ice paused,
-          it built ridges of sandy till. Where meltwater streams flowed over buried ice
-          and that ice later melted, the ground sagged into hummocky, pitted terrain.</p>
-          <p><em>Kid version:</em> A giant glacier dropped piles of sand and rocks and
-          left lumpy hills and bowl-shaped holes when buried ice chunks melted.</p>
-        `,
-        pois: `
-          <ul>
-            <li><strong>Pitted Outwash</strong> – Sandy plain with scattered pits where
-            buried ice melted and the ground collapsed into kettles.</li>
-            <li><strong>New Hope–Iola – Ice-Walled Lake Plain #1</strong> – Flat-topped
-            ridge that was once the muddy bottom of a lake held inside walls of ice.</li>
-            <li><strong>New Hope–Iola – Scenic Overlook</strong> – High vantage point for
-            viewing the hummock–kettle terrain and discussing glacial landscapes.</li>
-            <li><strong>New Hope–Iola – Hummock Field #1</strong> – Cluster of lumpy hills
-            formed as debris-covered ice melted in place.</li>
-          </ul>
-        `,
-        conceptsHtml: `
-          <p>This segment pairs well with lessons on:</p>
-          <ul>
-            <li>Moraines and glacial till</li>
-            <li>Pitted outwash and kettles</li>
-            <li>Ice-walled lake plains</li>
-            <li>Hummocky topography from melting buried ice</li>
-            <li>Intrusive igneous rocks (granite) and the Wolf River Batholith</li>
-          </ul>
-        `,
-        activitiesHtml: `
-          <ul>
-            <li><strong>Blanket Moraine Demo (10 min):</strong> Use a blanket and books to
-            model how glaciers push material into moraines.</li>
-            <li><strong>Buried Ice &amp; Kettles Model (15–20 min):</strong> Use ice cubes
-            and sand in a clear container to show how melting buried ice forms kettles.</li>
-            <li><strong>Overlook Landscape Sketch (20–30 min):</strong> Sketch the
-            hummock–kettle terrain from the scenic overlook and label likely glacial features.</li>
-          </ul>
-        `
-      },
-      "Kettlebowl": {
-  overview: `
-    <p>The Kettlebowl Segment is one of the best places on the Ice Age Trail
-    to help students visualize what happens when a glacier melts in place.
-    This landscape is filled with kettles, hummocks, and collapse features,
-    all created during a period of glacial stagnation at the margin of the
-    Langlade Lobe. Students can literally walk across the remnants of a melting
-    ice mass and see how uneven the land becomes when buried ice slowly disappears.</p>
-  `,
+// ----- Segment content loaded from external JSON -----
+let segmentContent = {};
 
-  bedrock: `
-    <p>The underlying bedrock here is <strong>Wolf River Granite</strong>,
-    a Middle Proterozoic intrusive rock about 1.5 billion years old.
-    This granite cooled slowly deep beneath the Earth’s surface and contains
-    distinctive round feldspar crystals (rapakivi texture). Although mostly covered
-    by glacial sediments in this segment, it forms the solid “basement” that the
-    glacial features sit on.</p>
-
-    <p><em>Kid version:</em> Far below your feet is one of Wisconsin’s oldest rocks—
-    a red granite that formed like slow-cooling fudge deep underground, long before
-    plants or animals lived on land.</p>
-  `,
-
-  glacial: `
-    <p>The Kettlebowl landscape is dominated by Late Pleistocene deposits of the
-    <strong>Copper Falls Formation</strong>, a reddish-brown sandy material left behind
-    by the retreating Langlade Lobe. This material forms the uneven hills, hollows,
-    and ridges that make this area feel especially “bumpy.”</p>
-
-    <p>Much of the rugged terrain comes from
-    <strong>collapsed meltwater-stream sediment</strong>: sand and gravel
-    deposited by fast-flowing meltwater streams that ran across buried ice.
-    When those ice blocks melted, the surface collapsed into closed depressions,
-    creating kettles, pits, and hummocky topography.</p>
-
-    <p><em>Kid version:</em> Imagine pouring sand onto a giant block of ice.
-    When the ice melts, the sand suddenly drops and makes big holes and lumpy hills.
-    That’s exactly what happened here.</p>
-  `,
-
-  pois: `
-    <ul>
-      <li><strong>Kettle</strong> – A steep-sided, bowl-shaped depression formed when a
-      block of glacier ice was buried in sand and gravel. After the ice melted,
-      the surface collapsed. The cluster of kettles here shows that the glacier
-      melted unevenly and left behind many ice blocks.</li>
-
-      <li><strong>Big Stone Hole</strong> – A very large, dramatic kettle formed when a
-      massive buried ice block melted and the ground above collapsed into a deep pit.
-      This is one of the most striking examples of collapse topography along the segment.</li>
-
-      <li><strong>Summit Lake Moraine</strong> – The northern part of the segment follows
-      the crest of this moraine, built at the margin of the Langlade Lobe. As the glacier
-      paused, it pushed and piled sediment into a curving ridge that marks an ancient
-      ice-front boundary. Walking this ridge is like walking the old edge of the glacier.</li>
-    </ul>
-  `,
-
-  conceptsHtml: `
-    <p>This segment pairs especially well with lessons on:</p>
-    <ul>
-      <li>Kettles and collapse topography</li>
-      <li>Hummocky terrain from melting buried ice</li>
-      <li>Moraines (Summit Lake Moraine)</li>
-      <li>Pitted outwash plains</li>
-      <li>Glacial stagnation and ice-block melting</li>
-      <li>Ancient granitic bedrock (Wolf River Batholith)</li>
-    </ul>
-  `,
-
-  activitiesHtml: `
-    <ul>
-      <li><strong>Buried Ice & Kettles Model (15–20 min):</strong> Use ice cubes and sand
-      to show how melting buried ice forms kettles and collapse pits.</li>
-
-      <li><strong>“Find the Ice Blocks” Mapping Challenge (on-trail):</strong> Have students
-      identify kettles along the trail and guess where the buried ice used to be. Sketch
-      or mark guesses on a simple field map.</li>
-
-      <li><strong>Moraine Ridge Walk (10–15 min):</strong> At the Summit Lake Moraine,
-      challenge students to notice rises and dips in the ridge crest and discuss how
-      the glacier built uneven piles of sediment.</li>
-
-      <li><strong>Hummock vs. Kettle Sorting Game (classroom):</strong> Show photos of
-      lumpy hills vs bowl-shaped depressions and let students sort them into glacial
-      feature categories.</li>
-    </ul>
-  `
-}
-    };
+fetch("segments.json")
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("Failed to load segments.json");
+    }
+    return response.json();
+  })
+  .then((data) => {
+    segmentContent = data;
+    console.log("Segment content loaded:", Object.keys(segmentContent));
+  })
+  .catch((err) => {
+    console.error("Error loading segment content:", err);
+  });
 
     const segIntroEl      = document.getElementById("segIntro");
     const segDetailsEl    = document.getElementById("segDetails");
@@ -339,42 +210,57 @@
     const segPOIsEl       = document.getElementById("segPOIs");
     const segConceptsEl   = document.getElementById("segConceptsLinks");
 
-        function updateSegmentPanel(segmentName){
-      const data = segmentContent[segmentName];
-      // Always bring user to the Segments tab first
-      setActiveTab("segments");
+    function wrapParagraph(text) {
+  if (!text) return "";
+  return `<p>${text}</p>`;
+}
 
-      if (!data){
-        segIntroEl.textContent = `No custom educator content is available yet for "${segmentName}".`;
-        segDetailsEl.hidden = true;
+function wrapList(items) {
+  if (!items || !Array.isArray(items) || items.length === 0) return "";
+  const lis = items.map((item) => `<li>${item}</li>`).join("");
+  return `<ul>${lis}</ul>`;
+}
 
-        // Reset activities tab to its default if we don't have segment-specific content
-        if (activitiesListEl){
-          activitiesListEl.innerHTML = defaultActivitiesHtml;
-        }
-        return;
-      }
 
-      // Populate Segments tab
-      segIntroEl.textContent = "";
-      segDetailsEl.hidden = false;
-      segTitleTextEl.textContent = segmentName;
-      segOverviewEl.innerHTML   = data.overview;
-      segBedrockEl.innerHTML    = data.bedrock;
-      segGlacialEl.innerHTML    = data.glacial;
-      segPOIsEl.innerHTML       = data.pois;
-      segConceptsEl.innerHTML   = data.conceptsHtml;
+       function updateSegmentPanel(segmentName){
+  const data = segmentContent[segmentName];
 
-      // Also populate Activities tab with segment-specific recommendations at the top
-      if (activitiesListEl){
-        activitiesListEl.innerHTML = `
-          <p><strong>Recommended activities for ${segmentName}:</strong></p>
-          ${data.activitiesHtml}
-          <hr style="margin: 10px 0; border-color: rgba(255,255,255,0.12);" />
-          ${defaultActivitiesHtml}
-        `;
-      }
+  // Always bring user to the Segments tab first
+  setActiveTab("segments");
+
+  if (!data){
+    segIntroEl.textContent = `No custom educator content is available yet for "${segmentName}".`;
+    segDetailsEl.hidden = true;
+
+    // Reset activities tab to its default if we don't have segment-specific content
+    if (activitiesListEl){
+      activitiesListEl.innerHTML = defaultActivitiesHtml;
     }
+    return;
+  }
+
+  // Populate Segments tab
+  segIntroEl.textContent = "";
+  segDetailsEl.hidden = false;
+  segTitleTextEl.textContent = segmentName;
+
+  segOverviewEl.innerHTML = wrapParagraph(data.overview);
+  segBedrockEl.innerHTML  = wrapParagraph(data.bedrock);
+  segGlacialEl.innerHTML  = wrapParagraph(data.glacial);
+  segPOIsEl.innerHTML     = wrapList(data.pois);
+  segConceptsEl.innerHTML = wrapList(data.concepts);
+
+  // Also populate Activities tab with segment-specific recommendations at the top
+  if (activitiesListEl){
+    activitiesListEl.innerHTML = `
+      <p><strong>Recommended activities for ${segmentName}:</strong></p>
+      ${wrapList(data.activities)}
+      <hr style="margin: 10px 0; border-color: rgba(255,255,255,0.12);" />
+      ${defaultActivitiesHtml}
+    `;
+  }
+}
+
 
     function syncPadding(){
       const collapsed = appRoot.classList.contains("collapsed");
@@ -383,24 +269,28 @@
     }
     syncPadding();
 
-    eduToggle.addEventListener("click", () => {
-      const collapsed = appRoot.classList.toggle("collapsed");
-      eduToggle.setAttribute("aria-expanded", String(!collapsed));
-      eduToggle.textContent = collapsed ? "Show" : "Hide";
-      syncPadding();
-    });
+  eduToggle.addEventListener("click", () => {
+  const collapsed = appRoot.classList.toggle("collapsed");
+  eduToggle.textContent = collapsed ? "Show Teacher Panel" : "Hide";
+  eduToggle.setAttribute("aria-expanded", String(!collapsed));
+  syncPadding();
+});
 
-    headerEduBtn.addEventListener("click", () => {
-      if (appRoot.classList.contains("collapsed")){
-        appRoot.classList.remove("collapsed");
-        eduToggle.setAttribute("aria-expanded", "true");
-        eduToggle.textContent = "Hide";
-        syncPadding();
-      } else {
-        // If already open, scroll to top for convenience
-        eduSide.querySelector('.eduSide__body')?.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    });
+showTeacherPanelBtn.addEventListener("click", () => {
+  // Uncollapse the sidebar
+  appRoot.classList.remove("collapsed");
+
+  // Update the Hide/Show button state
+  eduToggle.setAttribute("aria-expanded", "true");
+  eduToggle.textContent = "Hide";
+
+  // Recalculate map padding so the view resizes correctly
+  syncPadding();
+
+  // Optional: scroll sidebar to top
+  eduSide.querySelector('.eduSide__body')?.scrollTo({ top: 0, behavior: 'smooth' });
+});
+  
 
     const ro = new ResizeObserver(syncPadding);
     ro.observe(eduSide);
@@ -422,6 +312,39 @@
     introTeachers.addEventListener("click", () => { closeIntro(); appRoot.classList.remove("collapsed"); eduToggle.setAttribute("aria-expanded","true"); eduToggle.textContent="Hide"; syncPadding(); });
     introModal.addEventListener("click", (e) => { if (e.target === introModal) closeIntro(); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !introModal.hidden) closeIntro(); });
+
+    // ----- Educator Resources Modal (opened from header button) -----
+const eduResourcesModal = document.getElementById("eduResourcesModal");
+const eduResCloseBtn = eduResourcesModal.querySelector(".close");
+
+// open when header button is clicked
+headerEduBtn.addEventListener("click", () => {
+  eduResourcesModal.hidden = false;
+  // focus first heading or close button for accessibility
+  setTimeout(() => {
+    eduResCloseBtn.focus();
+  }, 50);
+});
+
+// close handlers
+function closeEduResources() {
+  eduResourcesModal.hidden = true;
+}
+
+eduResCloseBtn.addEventListener("click", closeEduResources);
+
+// click outside content closes modal
+eduResourcesModal.addEventListener("click", (e) => {
+  if (e.target === eduResourcesModal) closeEduResources();
+});
+
+// Esc key closes if open
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !eduResourcesModal.hidden) {
+    closeEduResources();
+  }
+});
+
 
     // ----- Layer List -----
     const layerList = new LayerList({ view });

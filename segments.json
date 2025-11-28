@@ -1,0 +1,87 @@
+{
+  "New Hope": {
+    "overview": "The New Hope–Iola Ski Hill segment sits where very old crystalline bedrock meets a young glacial landscape. It is a good place to help students see that the hills, kettles, and hummocks they are walking across are only the latest chapter in a much longer geologic story.",
+    "bedrock": "Beneath this segment lies part of the Wolf River Batholith and related Precambrian intrusive rocks that are more than a billion years old. These granite bodies cooled slowly from magma deep underground and now form the solid basement that supports the glacial hills at the surface. Although the bedrock is mostly buried here, its broad, gently rolling shape still influences where ice, meltwater, and modern streams could move.",
+    "glacial": "During the last Ice Age, ice of the Green Bay Lobe advanced across this area and then stagnated as the climate warmed. As the ice paused and wasted away, it left ridges of till, fields of hummocky topography, and pitted outwash where meltwater streams flowed over buried ice. When those buried ice blocks melted, the sand and gravel above them dropped down, creating closed depressions and irregular terrain that is easy to see from overlooks along the trail.",
+    "pois": [
+      "Pitted outwash area where depressions mark the former positions of buried ice blocks.",
+      "An ice-walled lake plain that represents the former floor of a small lake held in by walls of glacier ice.",
+      "A scenic overlook where you can see the contrast between flat uplands and lumpy, kettle-filled lowlands.",
+      "A hummock field where irregular hills reflect ice that melted in place rather than sliding away."
+    ],
+    "concepts": [
+      "How stagnating ice and buried ice blocks create kettles and hummocky terrain.",
+      "Differences between till, outwash, and collapsed meltwater-stream deposits.",
+      "How very old bedrock can be largely hidden yet still control the shape of the land.",
+      "Using viewpoints to read glacial landforms across a broader landscape."
+    ],
+    "activities": [
+      "Have students sketch a simple map from the overlook, marking hills, low spots, and possible kettles, then discuss where buried ice might once have been.",
+      "In the classroom, build a timeline on the floor that compares the age of the Precambrian bedrock to the much younger Ice Age deposits on top of it.",
+      "Ask students to describe how walking across a hummock field feels different from walking on a flat, outwash surface and connect those observations to glacial processes."
+    ]
+  },
+  "Kettlebowl": {
+    "overview": "The Kettlebowl segment is a compact example of collapse topography formed as a glacier stalled and melted in place at the margin of the Langlade Lobe. Along a relatively short stretch of trail you can show students kettles, hummocks, and a moraine crest, making it an excellent outdoor classroom for glacial processes.",
+    "bedrock": "The segment is underlain by granite of the Wolf River Batholith, a large Precambrian intrusive body that formed from slowly cooling magma deep in the crust. Although the granite is buried beneath a blanket of glacial sediment, it provides the hard foundation over which ice advanced and on which moraines and collapse features developed.",
+    "glacial": "Most of the surface materials here belong to the Copper Falls Formation, a reddish to buff sand and gravel left by the retreating Langlade Lobe. As the glacier stagnated, meltwater streams ran over and through blocks of buried ice, laying down sand and gravel on top of that ice. When the ice finally melted, the overlying deposits sagged, creating steep-sided kettles and irregular, hummocky hills. The Summit Lake Moraine, followed by the northern part of the segment, marks a former ice margin where sediment was pushed and piled up along the glacier’s edge.",
+    "pois": [
+      "A classic kettle where a buried block of ice melted and the ground above collapsed into a steep-sided depression.",
+      "The Big Stone Hole, a particularly large kettle that highlights how dramatic collapse features can be when a very large ice block melts out.",
+      "A portion of the Summit Lake Moraine, where the trail follows the crest of a ridge built at the margin of the Langlade Lobe."
+    ],
+    "concepts": [
+      "Formation of kettles and collapse topography from melting buried ice blocks.",
+      "How moraines record former positions of glacier margins on the landscape.",
+      "The relationship between meltwater, outwash, and the Copper Falls Formation.",
+      "Reading subtle changes in slope and elevation along a moraine crest."
+    ],
+    "activities": [
+      "On the trail, have students stand at the rim of a kettle, describe its shape, and sketch a simple cross-section that shows where the buried ice block once sat.",
+      "Walk a short stretch of the Summit Lake Moraine and ask students to note when they are on the ridge crest versus the flanks, then connect those observations to how ice piles material at its margin.",
+      "Back in the classroom or shelter, use a clear container, ice cubes, and sand to model how sediment collapses into pits as buried ice melts away."
+    ]
+  },
+  "Ringle": {
+    "overview": "The Ringle segment follows parts of the Hancock Moraine and nearby outwash deposits, giving students a straightforward example of how glaciers build ridges and how meltwater reshapes the landscape beyond those ridges. It is a good setting for comparing till-dominated landforms with more gently sloping outwash surfaces.",
+    "bedrock": "As in much of central Wisconsin, the bedrock beneath the Ringle area consists of Precambrian igneous and metamorphic rocks that are mostly hidden by glacial drift. The general elevation and slope of this buried surface influenced where ice could thicken and where meltwater tended to flow, but the main features visible to hikers here are the glacial deposits themselves rather than the underlying rock.",
+    "glacial": "The Hancock Moraine formed when a glacier front stood still for a time and dumped large amounts of unsorted sediment along its edge. This till ridge marks an old ice margin and can be traced for many miles. Beyond the moraine, meltwater streams flowing away from the ice spread sand and gravel across lower areas to create outwash plains and terraces. Together, the moraine and its outwash apron tell a clear story of ice first building a ridge and then releasing large volumes of water and sediment as it melted.",
+    "pois": [
+      "A stretch of trail that closely follows the crest of the Hancock Moraine, where the rise and fall of the ridge can be felt underfoot.",
+      "Slopes leading away from the moraine into outwash areas, where the ground surface becomes more gently inclined and better sorted.",
+      "Any small exposure or trail cut where the mixture of grain sizes in till can be contrasted with more uniform outwash sands."
+    ],
+    "concepts": [
+      "How moraines form at stationary glacier margins and what they record about past ice positions.",
+      "Differences between unsorted till and better-sorted outwash deposited by flowing water.",
+      "How to identify moraines and outwash plains by walking across them and paying attention to slope and surface texture.",
+      "The idea that meltwater can rework and redistribute material originally delivered by ice."
+    ],
+    "activities": [
+      "Have students draw a simple side-view sketch showing a moraine ridge with lower outwash surfaces in front of it, then label where the ice margin once stood.",
+      "On the trail, ask students to describe how the walking surface changes as they move from the moraine crest down onto outwash, and connect those observations to till versus outwash.",
+      "In class, use two containers of sediment (one mixed gravel and fines, one mostly sand) to represent till and outwash, and let students infer which might have been moved by ice versus flowing water."
+    ]
+  },
+  "Dells of the Eau Claire": {
+    "overview": "The Dells of the Eau Claire segment highlights a narrow, rocky gorge carved by the Eau Claire River into resistant Precambrian bedrock. It offers a strong contrast to nearby glacial landscapes and gives students a chance to focus on how running water shapes landforms where the last glacier did not completely reset the surface.",
+    "bedrock": "Here the river cuts through ancient crystalline rocks that are jointed and fractured. Those natural weaknesses guide where the river can most easily erode, leading to straight-walled channels, sharp bends, and stepped ledges. The exposed bedrock at the dells allows students to see rock type, fracture patterns, and how flowing water interacts with a hard substrate.",
+    "glacial": "This area lay near the margin of the last continental glacier, and ice did not completely plane off the existing topography. As a result, older landforms and the bedrock gorge have remained in place while the river continued to cut downward. Glacial deposits still mantle uplands and valley sides, but in the gorge itself, river erosion is the dominant process, exposing rock and creating falls, rapids, and plunge pools.",
+    "pois": [
+      "The main bedrock gorge where the river is confined between steep rock walls and follows zones of weakness in the bedrock.",
+      "Waterfalls or rapids that illustrate how changes in slope and rock resistance influence the speed and erosive power of the river.",
+      "Rock ledges and potholes where swirling water and sediment have ground into the bedrock over long periods of time."
+    ],
+    "concepts": [
+      "How running water erodes bedrock and deepens gorges over time.",
+      "The role of joints and fractures in guiding where a river cuts and how channels are shaped.",
+      "Why some areas were not completely smoothed or buried by the last glacier.",
+      "Differences between landscapes dominated by glacial erosion and those dominated by river erosion."
+    ],
+    "activities": [
+      "Ask students to trace the river’s path through the gorge on a simple field sketch and mark locations of rapids, falls, and calmer pools.",
+      "At an overlook, have students identify where they see active erosion versus more stable rock surfaces and discuss what controls those differences.",
+      "Back in the classroom, compare photos of the dells with photos of a glacially smoothed landscape and have students list similarities and differences in landforms and processes."
+    ]
+  }
+}

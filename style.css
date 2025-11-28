@@ -150,23 +150,51 @@
     .pdfList a:hover { background: rgba(255,255,255,.06); text-decoration: underline; }
 
     /* Modal (always show on load until closed) */
-    .modal{ position: fixed; z-index: 100; inset: 0; background: rgba(0,0,0,.5); }
-    .modal[hidden]{ display: none !important; }
-    .modal-content {
-      width: min(820px, 92%); margin: 6% auto; border-radius: 18px; padding: 0; overflow: hidden;
-      background: linear-gradient(180deg, #101520, #0c1019);
-      border: 1px solid var(--glass-border); box-shadow: 0 20px 60px rgba(0,0,0,.45);
-    }
-    .modal-head { display:flex; align-items:center; gap:10px; padding:12px 16px;
-      background: linear-gradient(180deg, rgba(34,41,56,.9), rgba(24,29,40,.85)); border-bottom:1px solid var(--glass-border); }
-    .modal-head h2 { margin:0; font-size:18px; color:var(--text-100); }
-    .modal .close { margin-left:auto; cursor:pointer; color:var(--text-300); font-size:20px; font-weight:700; background: rgba(255,255,255,.06);
-      width:28px; height:28px; line-height:26px; text-align:center; border-radius:8px; }
-    .modal .close:hover{ color:#fff; }
-    .modal-body { display:grid; grid-template-columns: 140px 1fr; gap:16px; padding:16px; }
-    .modal-body img { border-radius:10px; width:110px; height:auto; margin:6px auto 0; display:block; }
-    .modal-text{ color:var(--text-300); }
-    .modal-text ul { margin:10px 0 0 18px; }
+.modal{ position: fixed; z-index: 100; inset: 0; background: rgba(0,0,0,.5); }
+.modal[hidden]{ display: none !important; }
+.modal-content {
+  width: min(820px, 92%);
+  margin: 6% auto;
+  border-radius: 18px;
+  padding: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, #101520, #0c1019);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 60px rgba(0,0,0,.45);
+
+  /* NEW: constrain height and allow body to scroll */
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+.modal-head { display:flex; align-items:center; gap:10px; padding:12px 16px;
+  background: linear-gradient(180deg, rgba(34,41,56,.9), rgba(24,29,40,.85)); border-bottom:1px solid var(--glass-border); }
+.modal-head h2 { margin:0; font-size:18px; color:var(--text-100); }
+.modal .close { margin-left:auto; cursor:pointer; color:var(--text-300); font-size:20px; font-weight:700; background: rgba(255,255,255,.06);
+  width:28px; height:28px; line-height:26px; text-align:center; border-radius:8px; }
+.modal .close:hover{ color:#fff; }
+.modal-body {
+  display:grid;
+  grid-template-columns: 140px 1fr;
+  gap:16px;
+  padding:16px;
+
+  /* NEW: scrolling when content is tall */
+  overflow-y: auto;
+}
+
+.modal-body img { border-radius:10px; width:110px; height:auto; margin:6px auto 0; display:block; }
+.modal-text{ color:var(--text-300); }
+.modal-text ul { margin:10px 0 0 18px; }
+
+/* override for Educator Resources modal */
+.modal-body--edu {
+  grid-template-columns: 1fr;
+}
+.modal-body--edu .modal-text {
+  max-width: 640px;
+  margin: 0 auto;
+}
 
     @media (max-width: 800px){
       .app{ grid-template-columns: 1fr; }

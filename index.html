@@ -26,11 +26,13 @@
         <span class="chip" aria-hidden="true"></span>
         <h1 class="title">Educator Geologic Map of the Ice Age Trail</h1>
       </div>
-      <p class="tip">Click orange dots to open educator guides for that stop.</p>
-      <div style="margin-left:auto; display:flex; gap:8px;">
-        <button id="focusBtn" class="btn" title="Toggle Focus: highlight Trail & POIs">Focus Trail</button>
-        <button id="eduBtn" class="btn btn-accent" type="button" aria-label="Educator Resources" title="Educator Resources">Educator Resources</button>
-      </div>
+      <p class="tip">Click light blue dots for points of interest and orange trail segments for an overivew, geologic concepts, and activities.</p>
+     <div style="margin-left:auto; display:flex; gap:8px;">
+  <button id="focusBtn" class="btn" title="Toggle Focus: highlight Trail & POIs">Focus Trail</button>
+  <button id="showTeacherPanelBtn" class="btn" type="button" title="Show teacher panel">Teacher Panel</button>
+  <button id="eduBtn" class="btn btn-accent" type="button" aria-label="Educator Resources" title="Educator Resources">Educator Resources</button>
+</div>
+
     </div>
   </div>
 
@@ -56,60 +58,38 @@
 
     <!-- SEGMENTS TAB PANEL -->
     <section id="eduTab-segments" class="eduTabPanel is-active" role="tabpanel" aria-label="Trail segments">
-      <h3>Trail Segment</h3>
-      <p id="segIntro">Click any Ice Age Trail segment on the map to see teacher information for that segment.</p>
+  <h3>Trail Segment</h3>
+  <p id="segIntro">Click any Ice Age Trail segment on the map to see teacher information for that segment.</p>
 
-      <div id="segDetails" hidden>
-        <h3 id="segTitleLabel">Segment: <span id="segTitleText"></span></h3>
+  <div id="segDetails" hidden>
+    <h3 id="segTitleLabel">Segment: <span id="segTitleText"></span></h3>
 
-        <h4>Overview</h4>
-        <div id="segOverview"></div>
+    <h4>Overview</h4>
+    <div id="segOverview"></div>
+  </div>
+</section>
 
-        <h4>Bedrock Geology</h4>
-        <div id="segBedrock"></div>
-
-        <h4>Glacial Geology</h4>
-        <div id="segGlacial"></div>
-
-        <h4>Points of Interest Along This Segment</h4>
-        <div id="segPOIs"></div>
-
-        <h4>Linked Concepts</h4>
-        <div id="segConceptsLinks"></div>
-
-      </div>
-    </section>
 
     <!-- CONCEPTS TAB PANEL -->
     <section id="eduTab-concepts" class="eduTabPanel" role="tabpanel" aria-label="Geologic concepts" hidden>
-      <h3>Why this map exists</h3>
-      <p>This educator-focused map helps Wisconsin teachers connect students to local geology along the Ice Age Trail. It’s designed for quick prep and print-friendly guides.</p>
+  <h3>Geologic Story for This Segment</h3>
+  <p id="conceptsIntro">
+    Click an Ice Age Trail segment on the map, then open this tab to explore the bedrock, glacial history,
+    and key geologic ideas you might highlight with students.
+  </p>
 
-      <h3>Saunters Program</h3>
-      <ul class="pdfList">
-        <li><a href="https://www.iceagetrail.org/saunters/" target="_blank" rel="noopener">Ice Age Trail Alliance: Saunters</a></li>
-        <li><a href="https://storymaps.arcgis.com/stories/e039100982854c0db10e697349beec10" target="_blank" rel="noopener">Saunters StoryMap</a></li>
-      </ul>
+  <h4>Bedrock geology</h4>
+  <div id="segBedrock"></div>
 
-      <h3>How to use this map</h3>
-      <ul class="promptList">
-        <li>Pick a nearby segment or POI (orange dot).</li>
-        <li>Open the popup to preview field features and download the printable guide.</li>
-        <li>Use <em>Classroom Prep</em> prompts before the visit and <em>Sense-making</em> prompts after.</li>
-      </ul>
+  <h4>Glacial geology</h4>
+  <div id="segGlacial"></div>
 
-      <h3>Standards alignment (quick look)</h3>
-      <p>Activities align with WI Science (ESS2.A, ESS2.C, ESS3.B) and Environmental Literacy &amp; Sustainability (EES2–EES4). Each printable lists specific codes/grade bands.</p>
+  <h4>Points of interest along this segment</h4>
+  <div id="segPOIs"></div>
 
-      <h3>Printable teacher guides (examples)</h3>
-      <ul class="pdfList" id="teacherGuideList">
-        <li><a href="docs/How_Do_Moraines_Form.pdf" target="_blank" rel="noopener">How Do Moraines Form?</a></li>
-        <li><a href="docs/How_Do_Drumlins_Form.pdf" target="_blank" rel="noopener">How Do Drumlins Form?</a></li>
-        <li><a href="docs/What_Are_Eskers.pdf" target="_blank" rel="noopener">What Are Eskers?</a></li>
-        <li><a href="docs/What_Are_Kettles_and_Kettle_Lakes.pdf" target="_blank" rel="noopener">What Are Kettles and Kettle Lakes?</a></li>
-        <li><a href="docs/How_Glaciers_Shape_the_Land.pdf" target="_blank" rel="noopener">How Glaciers Shape the Land</a></li>
-      </ul>
-    </section>
+  <h4>Key geologic concepts</h4>
+  <div id="segConceptsLinks"></div>
+</section>
 
     <!-- ACTIVITIES TAB PANEL -->
     <section id="eduTab-activities" class="eduTabPanel" role="tabpanel" aria-label="Activities" hidden>
@@ -153,6 +133,48 @@
       </div>
     </div>
   </div>
+
+  <!-- Educator Resources modal (opened from header Educator Resources button) -->
+<div id="eduResourcesModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="eduResourcesTitle" hidden>
+  <div class="modal-content">
+    <div class="modal-head">
+      <h2 id="eduResourcesTitle">Educator Resources</h2>
+      <button class="close" aria-label="Close">&times;</button>
+    </div>
+<div class="modal-body modal-body--edu">
+        <div class="modal-text">
+        <h3>Why this map exists</h3>
+        <p>This educator-focused map helps Wisconsin teachers connect students to local geology along the Ice Age Trail. It is designed for quick prep and print-friendly guides that support field experiences like Saunters.</p>
+
+        <h3>Saunters Program</h3>
+        <ul class="pdfList">
+          <li><a href="https://www.iceagetrail.org/saunters/" target="_blank" rel="noopener">Ice Age Trail Alliance: Saunters</a></li>
+          <li><a href="https://storymaps.arcgis.com/stories/e039100982854c0db10e697349beec10" target="_blank" rel="noopener">Saunters StoryMap</a></li>
+        </ul>
+
+        <h3>How to use this map</h3>
+        <ul class="promptList">
+          <li>Pick a nearby segment or point of interest (orange dot).</li>
+          <li>Click the segment to open the teacher panel and review the overview, geologic concepts, and suggested activities.</li>
+          <li>Use the printable guides and activity ideas before, during, and after your field visit.</li>
+        </ul>
+
+        <h3>Standards alignment (quick look)</h3>
+        <p>Activities align with Wisconsin Science (ESS2.A, ESS2.C, ESS3.B) and Environmental Literacy &amp; Sustainability (EES2–EES4). Each printable guide lists specific standards and grade bands.</p>
+
+        <h3>Printable teacher guides (examples)</h3>
+        <ul class="pdfList">
+          <li><a href="docs/How_Do_Moraines_Form.pdf" target="_blank" rel="noopener">How Do Moraines Form?</a></li>
+          <li><a href="docs/How_Do_Drumlins_Form.pdf" target="_blank" rel="noopener">How Do Drumlins Form?</a></li>
+          <li><a href="docs/What_Are_Eskers.pdf" target="_blank" rel="noopener">What Are Eskers?</a></li>
+          <li><a href="docs/What_Are_Kettles_and_Kettle_Lakes.pdf" target="_blank" rel="noopener">What Are Kettles and Kettle Lakes?</a></li>
+          <li><a href="docs/How_Glaciers_Shape_the_Land.pdf" target="_blank" rel="noopener">How Glaciers Shape the Land</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <!-- API key -->
   <script src="config.local.js"></script>
