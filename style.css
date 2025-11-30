@@ -89,6 +89,100 @@
     .esri-layer-list__item-label, .esri-search__input { color: var(--text-100); }
     .esri-widget__heading { color: var(--text-300) !important; }
 
+    /* ---------- Popup card styling ---------- */
+
+.esri-popup__main-container {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+  border: 1px solid var(--glass-border);
+  background: transparent;
+}
+
+/* Keep using your gradient header/content */
+.esri-popup__header {
+  background: linear-gradient(180deg, var(--ink-700), var(--ink-800));
+}
+.esri-popup__content {
+  background: linear-gradient(180deg, rgba(108,147,186,0.08), rgba(24,29,40,0.35));
+  padding: 10px 14px;
+}
+
+/* Shared popup layout */
+.popupCard {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-100);
+}
+
+.popupPill {
+  display: inline-block;
+  padding: 3px 10px;
+  margin-bottom: 8px;
+  border-radius: 999px;
+  background: rgba(240,170,0,0.18);
+  color: var(--amber);
+  font-size: 14px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.popupRows {
+  margin-bottom: 6px;
+}
+
+.popupRow {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 8px;
+  margin-bottom: 3px;
+  font-size: 16Spx;
+}
+
+.popupLabel {
+  font-weight: 600;
+  color: var(--text-300);
+}
+
+.popupValue {
+  text-align: right;
+  color: var(--text-100);
+}
+
+.popupText {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--text-300);
+}
+
+/* Optional subtle variations by layer type */
+
+.popupCard--trail .popupPill {
+  background: rgba(240,170,0,0.22);
+  color: var(--amber);
+}
+
+.popupCard--poi .popupPill {
+  background: rgba(124,199,255,0.18);
+  color: var(--poi-main);
+}
+
+.popupCard--bedrock .popupPill {
+  background: rgba(111,143,190,0.20);
+  color: var(--g-blue3);
+}
+
+.popupCard--glacial .popupPill {
+  background: rgba(152,164,142,0.20);
+  color: var(--g-green1);
+}
+
+.popupCard--parking .popupPill {
+  background: rgba(255,255,255,0.10);
+  color: var(--text-100);
+}
+
+
     /* LayerList dark fix */
     .esri-layer-list, .esri-layer-list__list, .esri-layer-list__item, .esri-layer-list__item-label {
       background-color: var(--glass) !important; color: var(--text-100) !important;
@@ -160,12 +254,32 @@
       letter-spacing:.10em;
     }
 
-    .pdfList, .promptList { margin: 6px 0 12px; padding-left: 0; list-style: none; }
-    .pdfList li, .promptList li { margin: 6px 0; line-height: 1.35; }
-    .pdfList a { display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--text-100);
-      padding:6px 8px; border-radius:8px; transition: background .15s ease; }
-    .pdfList a::before { content:"📄"; font-size:16px; opacity:.9; }
-    .pdfList a:hover { background: rgba(255,255,255,.06); text-decoration: underline; }
+    .pdfList a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--amber);          /* was var(--text-100) */
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: background .15s ease;
+}
+
+.pdfList a:hover {
+  background: rgba(255,255,255,.06);
+  text-decoration: underline;
+  color: var(--amber-800);      /* optional: make hover a bit darker */
+}
+    /* Educator panel hyperlink styling */
+.eduSide__body a {
+  color: var(--amber);
+  text-decoration: underline;
+}
+
+.eduSide__body a:hover {
+  color: var(--amber-800);
+}
+
 
     /* Modal (always show on load until closed) */
 .modal{ position: fixed; z-index: 9999; inset: 0; background: rgba(0,0,0,.5); }

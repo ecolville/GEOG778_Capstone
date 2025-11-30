@@ -106,6 +106,18 @@ if (aboutBtn) {
     return `<ul>${lis}</ul>`;
   }
 
+ function popupRow(label, value) {
+  if (value == null) return "";
+  const v = String(value).trim();
+  if (!v) return "";
+  return `
+    <div class="popupRow">
+      <span class="popupLabel">${label}</span>
+      <span class="popupValue">${v}</span>
+    </div>`;
+}
+ 
+
   // ----- WIDGETS -----
   const bgGallery = new BasemapGallery({ view });
   view.ui.add(
@@ -137,17 +149,28 @@ if (aboutBtn) {
 
   // ----- LAYERS -----
   const bedrockGeology = new FeatureLayer({
-    url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/Bedrock_All_symbolized/FeatureServer",
-    title: "Bedrock Geology",
-    outFields: ["UnitName", "Age", "RockType", "Descr"],
-    opacity: 0.65,
-    blendMode: "multiply",
-    visible: false,
-    popupTemplate: {
-      title: "{UnitName}",
-      content: `<b>Age:</b> {Age}<br><b>Rock Type:</b> {RockType}<br><b>Description:</b> {Descr}`
+  url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/Bedrock_All_symbolized/FeatureServer",
+  title: "Bedrock Geology",
+  outFields: ["UnitName", "Age", "RockType", "Descr"],
+  opacity: 0.65,
+  blendMode: "multiply",
+  visible: false,
+  popupTemplate: {
+    title: "{UnitName}",
+    content: (e) => {
+      const a = e.graphic.attributes || {};
+      return `
+        <div class="popupCard popupCard--bedrock">
+          <div class="popupPill">Bedrock geology</div>
+          <div class="popupRows">
+            ${popupRow("Age", a.Age)}
+            ${popupRow("Rock type", a.RockType)}
+          </div>
+          ${a.Descr ? `<p class="popupText">${a.Descr}</p>` : ""}
+        </div>`;
     }
-  });
+  }
+});
   map.add(bedrockGeology);
 
   const glacialGeology = new FeatureLayer({
@@ -186,10 +209,20 @@ if (aboutBtn) {
       ]
     },
     popupTemplate: {
-      title: "{Simplified}",
-      content: "<b>Age:</b> {Age}<br><b>Description:</b> {Simplifi_1}"
+    title: "{Simplified}",
+    content: (e) => {
+      const a = e.graphic.attributes || {};
+      return `
+        <div class="popupCard popupCard--glacial">
+          <div class="popupPill">Glacial deposits</div>
+          <div class="popupRows">
+            ${popupRow("Age", a.Age)}
+          </div>
+          ${a.Simplifi_1 ? `<p class="popupText">${a.Simplifi_1}</p>` : ""}
+        </div>`;
     }
-  });
+  }
+});
   map.add(glacialGeology);
 
   const trailURL =
@@ -262,72 +295,79 @@ if (aboutBtn) {
         }
       ]
     },
-    popupTemplate: {
-      title: "{Segment}",
-      content:
-        `<div style="margin-bottom:8px;"><b>Type:</b> {Status}</div>` +
-        `<div><b>Length (mi):</b> {length_mi}</div>`
+   popupTemplate: {
+    title: "{Segment}",
+    content: (e) => {
+      const a = e.graphic.attributes || {};
+      return `
+        <div class="popupCard popupCard--trail">
+          <div class="popupPill">Ice Age Trail segment</div>
+          <div class="popupRows">
+            ${popupRow("Type", a.Status)}
+            ${popupRow("Length (mi)", a.length_mi)}
+          </div>
+          <p class="popupText">
+            Use the educator panel on the right for segment overview, geologic concepts, and activities.
+          </p>
+        </div>`;
     }
-  });
+  }
+});
   map.addMany([sectionsHalo, sectionsTop]);
 
-  const poiLayer = new FeatureLayer({
-    url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/POIs/FeatureServer/0",
-    title: "Geologic Points of Interest",
-    outFields: ["*"],
-    renderer: {
-      type: "simple",
-      symbol: {
-        type: "simple-marker",
-        style: "circle",
-        size: 11,
-        color: getComputedStyle(document.documentElement)
-          .getPropertyValue("--poi-main")
-          .trim(),
-        outline: {
-          color: getComputedStyle(document.documentElement)
-            .getPropertyValue("--poi-outline")
-            .trim(),
-          width: 1.2
-        }
-      }
-    },
-    popupTemplate: {
-      title: "{Name}",
-      content: (e) => {
-        const a = e.graphic.attributes || {};
-        const has = (v) => v && String(v).trim() !== "";
-        return `
-          <div style="line-height:1.45">
-            ${has(a.Feature_Type) ? `<div><b>Type:</b> ${a.Feature_Type}</div>` : ""}
-            ${has(a.Description)  ? `<div style="margin-top:8px;">${a.Description}</div>` : ""}
-          </div>`;
-      }
+ const poiLayer = new FeatureLayer({
+  url: "https://services1.arcgis.com/kkX9mRo34fTGAX96/arcgis/rest/services/POIs/FeatureServer/0",
+  title: "Geologic Points of Interest",
+  outFields: ["*"],
+  renderer: { type: "simple", 
+    symbol: { type: "simple-marker", 
+    style: "circle", size: 11, 
+    color: getComputedStyle(document.documentElement) .getPropertyValue("--poi-main") .trim(), 
+    outline: { color: getComputedStyle(document.documentElement) .getPropertyValue("--poi-outline") .trim(), width: 1.2 } } },
+  popupTemplate: {
+    title: "{Name}",
+    content: (e) => {
+      const a = e.graphic.attributes || {};
+      const has = (v) => v && String(v).trim() !== "";
+      return `
+        <div class="popupCard popupCard--poi">
+          <div class="popupPill">Point of interest</div>
+          <div class="popupRows">
+            ${has(a.Feature_Type) ? popupRow("Type", a.Feature_Type) : ""}
+          </div>
+          ${has(a.Description) ? `<p class="popupText">${a.Description}</p>` : ""}
+        </div>`;
     }
-  });
+  }
+});
   map.add(poiLayer);
 
   const parking = new FeatureLayer({
-    url: "https://services.arcgis.com/EeCmkqXss9GYEKIZ/arcgis/rest/services/IAT_Parking/FeatureServer",
-    title: "Parking Areas",
-    outFields: [
-      "Parking_Type",
-      "Description",
-      "Fee",
-      "Overnight_Park",
-      "Parking_Notes"
-    ],
-    visible: false,
-    popupTemplate: {
-      title: "Parking Area",
-      content:
-        `<div style="margin-bottom:6px;"><b>Type:</b> {Parking_Type}</div>` +
-        `<div style="margin-bottom:6px;"><b>Description:</b> {Description}</div>` +
-        `<div style="margin-bottom:6px;"><b>Fee:</b> {Fee}</div>` +
-        `<div style="margin-bottom:6px;"><b>Overnight:</b> {Overnight_Park}</div>` +
-        `<div><b>Notes:</b> {Parking_Notes}</div>`
+  url: "https://services.arcgis.com/EeCmkqXss9GYEKIZ/arcgis/rest/services/IAT_Parking/FeatureServer",
+  title: "Parking Areas",
+  outFields: [
+    "Parking_Type",
+    "Description",
+    "Fee",
+    "Overnight_Park",
+    "Parking_Notes"
+  ],
+  visible: false,
+  popupTemplate: {
+    title: "Parking Area",
+    content: (e) => {
+      const a = e.graphic.attributes || {};
+      return `
+        <div class="popupCard popupCard--parking">
+          <div class="popupPill">Trail access</div>
+          <div class="popupRows">
+           </div>
+          ${a.Description ? `<p class="popupText">${a.Description}</p>` : ""}
+          ${a.Parking_Notes ? `<p class="popupText">${a.Parking_Notes}</p>` : ""}
+        </div>`;
     }
-  });
+  }
+});
   map.add(parking);
 
   // ----- TEACHER TABS -----
@@ -378,9 +418,14 @@ if (aboutBtn) {
       segIntroEl.textContent = `No custom educator content is available yet for "${segmentName}".`;
       segDetailsEl.hidden = true;
 
-      if (activitiesListEl) {
-        activitiesListEl.innerHTML = defaultActivitiesHtml;
-      }
+     // Activities tab content
+if (activitiesListEl) {
+  activitiesListEl.innerHTML = `
+    <h4>Recommended activities for this segment</h4>
+    ${wrapList(data.activities)}
+  `;
+}
+
       return;
     }
 
